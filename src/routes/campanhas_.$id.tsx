@@ -14,6 +14,7 @@ import { RecordComments } from "@/components/record-comments";
 import { brl, fmtDate, useCampaign, useContents, useEvents, useProjects, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
 import { profileName, useProfiles } from "@/lib/team";
+import { useContracts, useMktEvents, useOfflineMedia, useSponsorships } from "@/lib/relacionamento";
 
 export const Route = createFileRoute("/campanhas_/$id")({
   head: () => ({ meta: [{ title: "Campanha — Marketing Hub" }] }),
@@ -35,6 +36,10 @@ function CampaignPage() {
   const { data: tasks = [] } = useTasks(filter);
   const { data: events = [] } = useEvents({ filters: filter });
   const { data: contents = [] } = useContents(filter);
+  const { data: mktEvents = [] } = useMktEvents(filter);
+  const { data: sponsorships = [] } = useSponsorships(filter);
+  const { data: media = [] } = useOfflineMedia(filter);
+  const { data: contracts = [] } = useContracts(filter);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) {
@@ -103,6 +108,9 @@ function CampaignPage() {
           <TabsTrigger value="tarefas">Tarefas ({tasks.length})</TabsTrigger>
           <TabsTrigger value="agenda">Agenda ({events.length})</TabsTrigger>
           <TabsTrigger value="conteudos">Conteúdos ({contents.length})</TabsTrigger>
+          {mktEvents.length + sponsorships.length + media.length + contracts.length > 0 && (
+            <TabsTrigger value="relacionamento">Eventos e mídia ({mktEvents.length + sponsorships.length + media.length + contracts.length})</TabsTrigger>
+          )}
           <TabsTrigger value="arquivos">Arquivos</TabsTrigger>
           <TabsTrigger value="comentarios">Comentários</TabsTrigger>
           <TabsTrigger value="historico">Histórico</TabsTrigger>
@@ -149,6 +157,22 @@ function CampaignPage() {
         <TabsContent value="conteudos">
           <ContentList items={contents} />
         </TabsContent>
+        <TabsContent value="relacionamento">
+          <div className="grid gap-4 lg:grid-cols-2">
+            {mktEvents.length > 0 && (
+              <LinkedGroup title="Eventos" items={mktEvents.map((e) => ({ id: e.id, title: e.name, sub: fmtDate(e.event_date), status: e.status, to: "/eventos/$id" as const }))} />
+            )}
+            {contracts.length > 0 && (
+              <LinkedGroup title="Contratos" items={contracts.map((x) => ({ id: x.id, title: x.object, sub: `${brl(Number(x.value))} · até ${fmtDate(x.end_date)}`, status: x.status, to: "/contratos/$id" as const }))} />
+            )}
+            {sponsorships.length > 0 && (
+              <LinkedGroup title="Patrocínios" items={sponsorships.map((x) => ({ id: x.id, title: x.event_name, sub: brl(Number(x.value)), status: x.status, search: "/patrocinios" as const }))} />
+            )}
+            {media.length > 0 && (
+              <LinkedGroup title="Mídia offline" items={media.map((x) => ({ id: x.id, title: x.title, sub: `${fmtDate(x.install_date)} – ${fmtDate(x.removal_date)}`, status: x.status, search: "/midia-offline" as const }))} />
+            )}
+          </div>
+        </TabsContent>
         <TabsContent value="arquivos">
           <Panel>
             <RecordAttachments module="campanhas" recordId={c.id} />
@@ -168,5 +192,40 @@ function CampaignPage() {
 
       <CampaignDialog open={editing} onOpenChange={setEditing} campaign={c} />
     </>
+  );
+}
+
+type LinkedItem = { id: string; title: string; sub: string; status: string } & (
+  | { to: "/eventos/$id" | "/contratos/$id"; search?: never }
+  | { search: "/patrocinios" | "/midia-offline"; to?: never }
+);
+
+function LinkedGroup({ title, items }: { title: string; items: LinkedItem[] }) {
+  return (
+    <Panel title={title}>
+      <ul className="-mx-2 divide-y divide-border">
+        {items.map((i) => {
+          const body = (
+            <>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium">{i.title}</span>
+                <span className="block truncate text-xs text-muted-foreground">{i.sub}</span>
+              </span>
+              <Pill value={i.status} />
+            </>
+          );
+          const cls = "flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-muted/40";
+          return (
+            <li key={i.id}>
+              {i.to ? (
+                <Link to={i.to} params={{ id: i.id }} className={cls}>{body}</Link>
+              ) : (
+                <Link to={i.search!} search={{ id: i.id }} className={cls}>{body}</Link>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </Panel>
   );
 }

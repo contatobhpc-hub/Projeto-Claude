@@ -91,6 +91,7 @@ export function TaskDialog({
           due_date: orNull(d.due_date),
           campaign_id: d.campaign_id,
           project_id: d.project_id,
+          event_id: task?.event_id ?? defaults?.event_id ?? null,
           labels: splitList(d.labels),
         };
     try {

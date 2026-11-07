@@ -12,13 +12,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ProjetosIdRouteImport } from './routes/projetos_.$id'
 import { Route as ProjetosRouteImport } from './routes/projetos'
+import { Route as PatrociniosRouteImport } from './routes/patrocinios'
+import { Route as ParceirosIdRouteImport } from './routes/parceiros_.$id'
+import { Route as ParceirosRouteImport } from './routes/parceiros'
 import { Route as MinhaContaRouteImport } from './routes/minha-conta'
+import { Route as MidiaOfflineRouteImport } from './routes/midia-offline'
 import { Route as KanbanRouteImport } from './routes/kanban'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventosIdRouteImport } from './routes/eventos_.$id'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as ContratosIdRouteImport } from './routes/contratos_.$id'
+import { Route as ContratosRouteImport } from './routes/contratos'
 import { Route as ConteudosRouteImport } from './routes/conteudos'
 import { Route as CampanhasIdRouteImport } from './routes/campanhas_.$id'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as CalendarioRouteImport } from './routes/calendario'
+import { Route as BrindesRouteImport } from './routes/brindes'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminLixeiraRouteImport } from './routes/admin.lixeira'
@@ -41,9 +50,29 @@ const ProjetosRoute = ProjetosRouteImport.update({
   path: '/projetos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatrociniosRoute = PatrociniosRouteImport.update({
+  id: '/patrocinios',
+  path: '/patrocinios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParceirosIdRoute = ParceirosIdRouteImport.update({
+  id: '/parceiros_/$id',
+  path: '/parceiros/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParceirosRoute = ParceirosRouteImport.update({
+  id: '/parceiros',
+  path: '/parceiros',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MinhaContaRoute = MinhaContaRouteImport.update({
   id: '/minha-conta',
   path: '/minha-conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MidiaOfflineRoute = MidiaOfflineRouteImport.update({
+  id: '/midia-offline',
+  path: '/midia-offline',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KanbanRoute = KanbanRouteImport.update({
@@ -54,6 +83,26 @@ const KanbanRoute = KanbanRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosIdRoute = EventosIdRouteImport.update({
+  id: '/eventos_/$id',
+  path: '/eventos/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContratosIdRoute = ContratosIdRouteImport.update({
+  id: '/contratos_/$id',
+  path: '/contratos/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContratosRoute = ContratosRouteImport.update({
+  id: '/contratos',
+  path: '/contratos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConteudosRoute = ConteudosRouteImport.update({
@@ -74,6 +123,11 @@ const CampanhasRoute = CampanhasRouteImport.update({
 const CalendarioRoute = CalendarioRouteImport.update({
   id: '/calendario',
   path: '/calendario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrindesRoute = BrindesRouteImport.update({
+  id: '/brindes',
+  path: '/brindes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -115,12 +169,21 @@ export interface FileRoutesByFullPath {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
   '/conteudos': typeof ConteudosRoute
+  '/contratos': typeof ContratosRoute
+  '/contratos/$id': typeof ContratosIdRoute
+  '/eventos': typeof EventosRoute
+  '/eventos/$id': typeof EventosIdRoute
   '/kanban': typeof KanbanRoute
+  '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/parceiros': typeof ParceirosRoute
+  '/parceiros/$id': typeof ParceirosIdRoute
+  '/patrocinios': typeof PatrociniosRoute
   '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -133,12 +196,21 @@ export interface FileRoutesByTo {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
   '/conteudos': typeof ConteudosRoute
+  '/contratos': typeof ContratosRoute
+  '/contratos/$id': typeof ContratosIdRoute
+  '/eventos': typeof EventosRoute
+  '/eventos/$id': typeof EventosIdRoute
   '/kanban': typeof KanbanRoute
+  '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/parceiros': typeof ParceirosRoute
+  '/parceiros/$id': typeof ParceirosIdRoute
+  '/patrocinios': typeof PatrociniosRoute
   '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -152,12 +224,21 @@ export interface FileRoutesById {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas_/$id': typeof CampanhasIdRoute
   '/conteudos': typeof ConteudosRoute
+  '/contratos': typeof ContratosRoute
+  '/contratos_/$id': typeof ContratosIdRoute
+  '/eventos': typeof EventosRoute
+  '/eventos_/$id': typeof EventosIdRoute
   '/kanban': typeof KanbanRoute
+  '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/parceiros': typeof ParceirosRoute
+  '/parceiros_/$id': typeof ParceirosIdRoute
+  '/patrocinios': typeof PatrociniosRoute
   '/projetos': typeof ProjetosRoute
   '/projetos_/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
@@ -172,12 +253,21 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
     | '/conteudos'
+    | '/contratos'
+    | '/contratos/$id'
+    | '/eventos'
+    | '/eventos/$id'
     | '/kanban'
+    | '/midia-offline'
     | '/minha-conta'
+    | '/parceiros'
+    | '/parceiros/$id'
+    | '/patrocinios'
     | '/projetos'
     | '/projetos/$id'
     | '/redefinir-senha'
@@ -190,12 +280,21 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
     | '/conteudos'
+    | '/contratos'
+    | '/contratos/$id'
+    | '/eventos'
+    | '/eventos/$id'
     | '/kanban'
+    | '/midia-offline'
     | '/minha-conta'
+    | '/parceiros'
+    | '/parceiros/$id'
+    | '/patrocinios'
     | '/projetos'
     | '/projetos/$id'
     | '/redefinir-senha'
@@ -208,12 +307,21 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas_/$id'
     | '/conteudos'
+    | '/contratos'
+    | '/contratos_/$id'
+    | '/eventos'
+    | '/eventos_/$id'
     | '/kanban'
+    | '/midia-offline'
     | '/minha-conta'
+    | '/parceiros'
+    | '/parceiros_/$id'
+    | '/patrocinios'
     | '/projetos'
     | '/projetos_/$id'
     | '/redefinir-senha'
@@ -227,12 +335,21 @@ export interface RootRouteChildren {
   AdminLixeiraRoute: typeof AdminLixeiraRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AuthRoute: typeof AuthRoute
+  BrindesRoute: typeof BrindesRoute
   CalendarioRoute: typeof CalendarioRoute
   CampanhasRoute: typeof CampanhasRoute
   CampanhasIdRoute: typeof CampanhasIdRoute
   ConteudosRoute: typeof ConteudosRoute
+  ContratosRoute: typeof ContratosRoute
+  ContratosIdRoute: typeof ContratosIdRoute
+  EventosRoute: typeof EventosRoute
+  EventosIdRoute: typeof EventosIdRoute
   KanbanRoute: typeof KanbanRoute
+  MidiaOfflineRoute: typeof MidiaOfflineRoute
   MinhaContaRoute: typeof MinhaContaRoute
+  ParceirosRoute: typeof ParceirosRoute
+  ParceirosIdRoute: typeof ParceirosIdRoute
+  PatrociniosRoute: typeof PatrociniosRoute
   ProjetosRoute: typeof ProjetosRoute
   ProjetosIdRoute: typeof ProjetosIdRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
@@ -261,11 +378,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjetosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patrocinios': {
+      id: '/patrocinios'
+      path: '/patrocinios'
+      fullPath: '/patrocinios'
+      preLoaderRoute: typeof PatrociniosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parceiros_/$id': {
+      id: '/parceiros_/$id'
+      path: '/parceiros/$id'
+      fullPath: '/parceiros/$id'
+      preLoaderRoute: typeof ParceirosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parceiros': {
+      id: '/parceiros'
+      path: '/parceiros'
+      fullPath: '/parceiros'
+      preLoaderRoute: typeof ParceirosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/minha-conta': {
       id: '/minha-conta'
       path: '/minha-conta'
       fullPath: '/minha-conta'
       preLoaderRoute: typeof MinhaContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/midia-offline': {
+      id: '/midia-offline'
+      path: '/midia-offline'
+      fullPath: '/midia-offline'
+      preLoaderRoute: typeof MidiaOfflineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kanban': {
@@ -280,6 +425,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos_/$id': {
+      id: '/eventos_/$id'
+      path: '/eventos/$id'
+      fullPath: '/eventos/$id'
+      preLoaderRoute: typeof EventosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contratos_/$id': {
+      id: '/contratos_/$id'
+      path: '/contratos/$id'
+      fullPath: '/contratos/$id'
+      preLoaderRoute: typeof ContratosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contratos': {
+      id: '/contratos'
+      path: '/contratos'
+      fullPath: '/contratos'
+      preLoaderRoute: typeof ContratosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conteudos': {
@@ -308,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/calendario'
       fullPath: '/calendario'
       preLoaderRoute: typeof CalendarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brindes': {
+      id: '/brindes'
+      path: '/brindes'
+      fullPath: '/brindes'
+      preLoaderRoute: typeof BrindesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -363,12 +543,21 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLixeiraRoute: AdminLixeiraRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AuthRoute: AuthRoute,
+  BrindesRoute: BrindesRoute,
   CalendarioRoute: CalendarioRoute,
   CampanhasRoute: CampanhasRoute,
   CampanhasIdRoute: CampanhasIdRoute,
   ConteudosRoute: ConteudosRoute,
+  ContratosRoute: ContratosRoute,
+  ContratosIdRoute: ContratosIdRoute,
+  EventosRoute: EventosRoute,
+  EventosIdRoute: EventosIdRoute,
   KanbanRoute: KanbanRoute,
+  MidiaOfflineRoute: MidiaOfflineRoute,
   MinhaContaRoute: MinhaContaRoute,
+  ParceirosRoute: ParceirosRoute,
+  ParceirosIdRoute: ParceirosIdRoute,
+  PatrociniosRoute: PatrociniosRoute,
   ProjetosRoute: ProjetosRoute,
   ProjetosIdRoute: ProjetosIdRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,

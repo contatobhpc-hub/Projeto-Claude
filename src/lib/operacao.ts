@@ -69,6 +69,11 @@ const TONES: Record<string, string> = {
   Atrasado: TONE.red, Concluída: TONE.green, Concluído: TONE.green, Aprovado: TONE.green, Aprovada: TONE.green,
   Publicado: TONE.teal, Arquivado: TONE.gray, Cancelada: TONE.gray, Cancelado: TONE.gray,
   Reprovada: TONE.red, "Não solicitada": TONE.gray,
+  // Fase 3: parceiros, contratos, eventos, patrocínios, mídia
+  Prospect: TONE.gray, Negociação: TONE.amber, Ativo: TONE.green, Renovação: TONE.orange, Inativo: TONE.gray,
+  "Em análise": TONE.amber, Assinado: TONE.blue, Vigente: TONE.green, Encerrado: TONE.gray,
+  "Em produção": TONE.violet, Confirmado: TONE.blue, "Em negociação": TONE.amber, "Em execução": TONE.blue,
+  "Arte em produção": TONE.violet, "Aguardando instalação": TONE.amber, Instalado: TONE.green, Retirado: TONE.gray,
   // categorias do calendário
   Campanha: TONE.indigo, Evento: TONE.pink, Publicação: TONE.blue, Reunião: TONE.violet, Entrega: TONE.green,
   Prazo: TONE.red, Contrato: TONE.amber, Patrocínio: TONE.orange, Outdoor: TONE.teal, Rádio: TONE.yellow,

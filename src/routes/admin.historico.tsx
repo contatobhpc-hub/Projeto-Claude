@@ -38,6 +38,18 @@ const TABLE_LABELS: Record<string, string> = {
   tasks: "Tarefas",
   calendar_events: "Calendário",
   content_items: "Conteúdos",
+  partners: "Parceiros",
+  contracts: "Contratos",
+  events: "Eventos",
+  event_schedule: "Cronograma de eventos",
+  event_attendees: "Convidados",
+  event_suppliers: "Fornecedores de eventos",
+  sponsorships: "Patrocínios",
+  offline_media: "Mídia offline",
+  inventory_items: "Brindes",
+  inventory_movements: "Movimentações de estoque",
+  checklist_items: "Checklists",
+  comments: "Comentários",
 };
 
 const ACTION_LABELS: Record<AuditLogRow["action"], { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {

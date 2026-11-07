@@ -14,6 +14,7 @@ import { CURRENT_PHASE } from "@/lib/navigation";
 import { DOT, fmtDate, isOverdue, todayISO, useCampaigns, useContents, useEvents, useProjects, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
 import { useProfiles } from "@/lib/team";
+import { contractAlert, nextSponsorshipDeadline, removalAlert, stockLevel, useContracts, useInventory, useOfflineMedia, useSponsorships } from "@/lib/relacionamento";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Dashboard — Marketing Hub" }] }),
@@ -44,6 +45,35 @@ function Dashboard() {
   const { data: projects = [] } = useProjects();
   const { data: contents = [] } = useContents();
   const [openTask, setOpenTask] = useState<TaskRow | null>(null);
+  const { data: contracts = [] } = useContracts();
+  const { data: inventory = [] } = useInventory();
+  const { data: media = [] } = useOfflineMedia();
+  const { data: sponsorships = [] } = useSponsorships();
+
+  const alerts: { label: string; n: number; to: "/contratos" | "/brindes" | "/midia-offline" | "/patrocinios"; tone: string }[] = [
+    {
+      label: "contratos vencidos ou vencendo em 30 dias",
+      n: contracts.filter((c) => ["expired", "critical", "warning"].includes(contractAlert(c).level)).length,
+      to: "/contratos",
+      tone: "border-red-500/40 bg-red-500/10",
+    },
+    { label: "brindes com estoque baixo ou zerado", n: inventory.filter((i) => stockLevel(i) !== "ok").length, to: "/brindes", tone: "border-amber-500/40 bg-amber-500/10" },
+    {
+      label: "mídias para retirar nos próximos 7 dias",
+      n: media.filter((m) => ["expired", "critical", "soon"].includes(removalAlert(m).level)).length,
+      to: "/midia-offline",
+      tone: "border-amber-500/40 bg-amber-500/10",
+    },
+    {
+      label: "patrocínios com prazo nos próximos 7 dias",
+      n: sponsorships.filter((x) => {
+        const d = nextSponsorshipDeadline(x);
+        return !!d && d.days <= 7;
+      }).length,
+      to: "/patrocinios",
+      tone: "border-amber-500/40 bg-amber-500/10",
+    },
+  ].filter((a) => a.n > 0);
 
   const myOpen = tasks
     .filter((t) => t.assignee_id === profile?.id && !["Concluído", "Cancelado"].includes(t.status))
@@ -51,9 +81,10 @@ function Dashboard() {
   const myLate = myOpen.filter((t) => isOverdue(t.due_date, false)).length;
   const teamLate = tasks.filter((t) => isOverdue(t.due_date, ["Concluído", "Cancelado"].includes(t.status))).length;
 
-  const pending: { label: string; to: "/campanhas" | "/projetos" | "/conteudos"; n: number }[] = [];
+  const pending: { label: string; to: "/campanhas" | "/projetos" | "/conteudos" | "/contratos"; n: number }[] = [];
   if (can("campanhas", "approve")) pending.push({ label: "Campanhas aguardando aprovação", to: "/campanhas", n: campaigns.filter((c) => c.approval_status === "Aguardando").length });
   if (can("projetos", "approve")) pending.push({ label: "Projetos aguardando aprovação", to: "/projetos", n: projects.filter((p) => p.approval_status === "Aguardando").length });
+  if (can("contratos", "approve")) pending.push({ label: "Contratos aguardando aprovação", to: "/contratos", n: contracts.filter((c) => c.approval_status === "Aguardando").length });
   if (can("conteudos", "approve")) pending.push({ label: "Conteúdos aguardando aprovação", to: "/conteudos", n: contents.filter((c) => c.status === "Aguardando aprovação").length });
   const pendingTotal = pending.reduce((s, p) => s + p.n, 0);
 
@@ -72,6 +103,18 @@ function Dashboard() {
         <Stat label="Tarefas atrasadas na equipe" value={String(teamLate)} />
         <Stat label="Compromissos nos próximos 7 dias" value={String(events.length)} />
       </div>
+
+      {alerts.length > 0 && (
+        <Panel title="Precisa de atenção" className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            {alerts.map((a) => (
+              <Link key={a.label} to={a.to} className={`rounded-xl border px-4 py-2 text-sm hover:opacity-90 ${a.tone}`}>
+                <strong className="tabular-nums">{a.n}</strong> {a.label}
+              </Link>
+            ))}
+          </div>
+        </Panel>
+      )}
 
       {pendingTotal > 0 && (
         <Panel title="Esperando sua aprovação" className="mb-6">

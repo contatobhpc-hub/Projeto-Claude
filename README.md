@@ -37,11 +37,35 @@ Regras aplicadas no banco (`supabase/migrations/20261107000001_operacao.sql`):
 - **Colaborador no Kanban/Calendário:** atualiza status e descrição só do que está atribuído a ele, e anexa/comenta nesses itens.
 - **Versões de conteúdo:** gravadas automaticamente a cada alteração de título ou texto.
 
+## Fase 3 — Relacionamento e materiais
+
+| Tela | O que faz |
+| --- | --- |
+| Parceiros | Cadastro com contato (WhatsApp, telefone, e-mail), investimento e retorno; página com contratos, patrocínios, eventos e mídia do parceiro |
+| Contratos | Alertas de vencimento (vencidos, 30 e 90 dias), aprovação da Diretoria, checklist, PDF e anexos |
+| Eventos | Checklist por grupo (Arte, Convite, Coffee…), cronograma, convidados com confirmação/presença e planilha, fornecedores × orçamento, brindes e tarefas |
+| Patrocínios | Verba anual × comprometido × realizado, gastos por categoria, prazos (materiais, contrapartidas, prestação de contas), contrapartidas e importação de planilha |
+| Mídia Offline | Formatos, local, período e alertas de retirada; arte e fotos anexadas |
+| Brindes | Estoque com entradas, saídas, reservas para eventos e inventário; saldo só muda por movimentação |
+| Calendário | Passa a mostrar eventos, vencimentos de contratos e instalação/retirada de mídia |
+| Dashboard | Quadro "Precisa de atenção" com contratos vencendo, estoque baixo, mídia a retirar e prazos de patrocínio |
+| Configurações | Listas de categorias (parceiros, contratos, mídia) e verba anual de patrocínios |
+
+Regras no banco (`supabase/migrations/20261107000002_relacionamento.sql`):
+
+- **Estoque:** o saldo é calculado só pelas movimentações, com bloqueio de saldo negativo; movimentações não são editadas nem apagadas.
+- **Contratos:** aprovação no mesmo fluxo de campanhas e projetos.
+- **Patrocínios:** a mesma linha (evento + instituição + data) não entra duas vezes.
+- **Eventos:** o responsável com cargo Colaborador edita checklist, cronograma e convidados do próprio evento.
+
+Carga opcional: `supabase/seed/patrocinios_2026.sql` traz os 51 patrocínios da planilha "Controle de Patrocínios" (R$ 65.370,61; verba de R$ 250.000 já configurada).
+
 ## Como colocar no ar
 
 1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode os
    arquivos de `supabase/migrations/` **em ordem** (primeiro `20261106000001_fundacao.sql`,
-   depois `20261107000001_operacao.sql`).
+   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`).
+   Se quiser os patrocínios de 2026, rode também `supabase/seed/patrocinios_2026.sql`.
    (Ou, com a CLI: `npx supabase link --project-ref <id>` e `npx supabase db push`.)
 2. **Autenticação:** em *Authentication → URL Configuration*, coloque o endereço
    do app em *Site URL* e acrescente `<endereço>/redefinir-senha` em *Redirect URLs*.
@@ -79,9 +103,9 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (49 casos: autopromoção, colaborador editando tarefa de
+os cenários de permissão (63 casos: autopromoção, colaborador editando tarefa de
 outro, analista excluindo, último administrador, domínio de cadastro, aprovações
-de campanha e conteúdo etc.).
+de campanha, conteúdo e contrato, estoque, convidados de evento etc.).
 Rode-o sempre que mudar uma migração.
 
 ## Diferenças em relação ao app antigo

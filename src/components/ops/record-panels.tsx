@@ -76,9 +76,23 @@ export function InfoRow({ label, children }: { label: string; children: ReactNod
 
 // ----------------------------------------------------------------- Checklist
 
-export function RecordChecklist({ module, recordId, canEdit }: { module: ModuleKey; recordId: string; canEdit: boolean }) {
+export function RecordChecklist({
+  module,
+  recordId,
+  canEdit,
+  group = "",
+  title = "Checklist",
+}: {
+  module: ModuleKey;
+  recordId: string;
+  canEdit: boolean;
+  /** Grupo do item (ex.: "Arte", "Contrapartidas"). Vazio = checklist geral. */
+  group?: string;
+  title?: string;
+}) {
   const qc = useQueryClient();
-  const { data: items = [], isLoading } = useChecklist(module, recordId);
+  const { data: all = [], isLoading } = useChecklist(module, recordId);
+  const items = all.filter((i) => (i.group_label ?? "") === group);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const key = ["checklist_items", module, recordId];
@@ -88,7 +102,7 @@ export function RecordChecklist({ module, recordId, canEdit }: { module: ModuleK
     e.preventDefault();
     if (!text.trim()) return;
     setBusy(true);
-    const { error } = await supabase.from("checklist_items").insert({ module, record_id: recordId, text: text.trim() });
+    const { error } = await supabase.from("checklist_items").insert({ module, record_id: recordId, text: text.trim(), group_label: group });
     setBusy(false);
     if (error) return toast.error(errorMessage(error));
     setText("");
@@ -96,7 +110,7 @@ export function RecordChecklist({ module, recordId, canEdit }: { module: ModuleK
   }
 
   async function toggle(id: string, value: boolean) {
-    qc.setQueryData(key, (old: typeof items | undefined) => old?.map((i) => (i.id === id ? { ...i, done: value } : i)));
+    qc.setQueryData(key, (old: typeof all | undefined) => old?.map((i) => (i.id === id ? { ...i, done: value } : i)));
     const { error } = await supabase.from("checklist_items").update({ done: value }).eq("id", id);
     if (error) toast.error(errorMessage(error));
     void qc.invalidateQueries({ queryKey: key });
@@ -111,7 +125,7 @@ export function RecordChecklist({ module, recordId, canEdit }: { module: ModuleK
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Checklist</h3>
+        <h3 className="text-sm font-semibold">{title}</h3>
         {items.length > 0 && (
           <span className="text-xs text-muted-foreground">
             {done} de {items.length}
@@ -177,6 +191,16 @@ const FIELD_LABELS: Record<string, string> = {
   team_ids: "equipe", due_date: "prazo", assignee_id: "responsável", labels: "etiquetas", position: "ordem",
   event_date: "data", start_time: "horário", duration_min: "duração", participant_ids: "participantes", agency: "agência",
   task_id: "tarefa", category: "categoria", body: "texto", tags: "tags", review_note: "observação de revisão",
+  company: "empresa", city: "cidade", contact_name: "contato", phone: "telefone", whatsapp: "WhatsApp", email: "e-mail",
+  document: "CNPJ/CPF", counterparts: "contrapartidas", investment_month: "investimento mensal", expected_return: "retorno esperado",
+  delivered_return: "retorno entregue", object: "objeto", partner_id: "parceiro", value: "valor", cost_center: "centro de custo",
+  renewal_date: "renovação", auto_renewal: "renovação automática", venue: "local", partner_ids: "parceiros",
+  expected_audience: "público esperado", event_name: "evento", institution: "instituição", tier: "cota",
+  contract_id: "contrato", event_id: "evento", materials_deadline: "prazo de materiais",
+  counterparts_deadline: "prazo de contrapartidas", accounting_deadline: "prazo de prestação de contas",
+  report_summary: "relatório", categories: "categorias", location: "localização", supplier: "fornecedor",
+  install_date: "instalação", removal_date: "retirada", code: "código", unit_value: "valor unitário",
+  min_quantity: "estoque mínimo", quantity: "saldo", reserved: "reservado",
 };
 const SKIP = new Set(["updated_at", "updated_by", "created_at", "created_by", "approved_by", "approved_at", "completed_at", "deleted_at", "id"]);
 
@@ -225,7 +249,7 @@ export function ApprovalPanel({
   module,
   record,
 }: {
-  table: "campaigns" | "projects";
+  table: "campaigns" | "projects" | "contracts";
   module: ModuleKey;
   record: { id: string; approval_status: ApprovalStatus; approval_note: string; approved_by: string | null; approved_at: string | null };
 }) {

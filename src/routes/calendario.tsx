@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   addDays,
@@ -11,7 +11,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, ListTodo, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, ListTodo, Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
 import { Can, ModuleGuard } from "@/components/permission-gate";
@@ -27,6 +27,10 @@ import type { CalendarEventRow, TaskRow } from "@/integrations/supabase/types";
 import { DOT, EVENT_CATEGORIES, fmtDate, todayISO, useEvents, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
 import { profileName, useProfiles } from "@/lib/team";
+import { useContracts, useMktEvents, useOfflineMedia } from "@/lib/relacionamento";
+
+/** Marco de outro módulo (evento, vencimento de contrato, instalação/retirada de mídia). */
+type Milestone = { key: string; date: string; title: string; kind: string; go: () => void };
 
 export const Route = createFileRoute("/calendario")({
   head: () => ({ meta: [{ title: "Calendário — Marketing Hub" }] }),
@@ -49,6 +53,8 @@ function CalendarPage() {
   const [category, setCategory] = useState(ALL);
   const [onlyMine, setOnlyMine] = useState(false);
   const [showTasks, setShowTasks] = useState(true);
+  const [showMilestones, setShowMilestones] = useState(true);
+  const nav = useNavigate();
   const [openEvent, setOpenEvent] = useState<CalendarEventRow | { date: string } | null>(null);
   const [openTask, setOpenTask] = useState<TaskRow | null>(null);
 
@@ -60,6 +66,33 @@ function CalendarPage() {
   const { data: events = [] } = useEvents({ from, to });
   const { data: allTasks = [] } = useTasks();
   const canSeeTasks = can("kanban", "view");
+  const { data: mktEvents = [] } = useMktEvents();
+  const { data: contracts = [] } = useContracts();
+  const { data: media = [] } = useOfflineMedia();
+  const anyMilestoneModule = can("eventos", "view") || can("contratos", "view") || can("midia", "view");
+
+  const milestones = useMemo<Milestone[]>(() => {
+    if (!showMilestones || category !== ALL || onlyMine) return [];
+    const out: Milestone[] = [];
+    const inRange = (d: string | null): d is string => !!d && d >= from && d <= to;
+    for (const e of mktEvents) {
+      if (inRange(e.event_date) && e.status !== "Cancelado") {
+        out.push({ key: `ev-${e.id}`, date: e.event_date, title: e.name, kind: "Evento", go: () => void nav({ to: "/eventos/$id", params: { id: e.id } }) });
+      }
+    }
+    for (const c of contracts) {
+      if (inRange(c.end_date) && !["Encerrado", "Cancelado"].includes(c.status)) {
+        out.push({ key: `ct-${c.id}`, date: c.end_date, title: c.object, kind: "Contrato vence", go: () => void nav({ to: "/contratos/$id", params: { id: c.id } }) });
+      }
+    }
+    for (const m of media) {
+      if (m.status === "Cancelado") continue;
+      const open = () => void nav({ to: "/midia-offline", search: { id: m.id } });
+      if (inRange(m.install_date) && m.status !== "Retirado") out.push({ key: `mi-${m.id}`, date: m.install_date, title: m.title, kind: "Instalação", go: open });
+      if (inRange(m.removal_date) && m.status !== "Retirado") out.push({ key: `mr-${m.id}`, date: m.removal_date, title: m.title, kind: "Retirada", go: open });
+    }
+    return out;
+  }, [showMilestones, category, onlyMine, mktEvents, contracts, media, from, to, nav]);
 
   const mine = (e: { assignee_id: string | null; participant_ids?: string[] }) =>
     e.assignee_id === profile?.id || (e.participant_ids ?? []).includes(profile?.id ?? "");
@@ -145,6 +178,12 @@ function CalendarPage() {
               <Label htmlFor="tasks" className="text-sm">Prazos de tarefas</Label>
             </div>
           )}
+          {anyMilestoneModule && (
+            <div className="flex items-center gap-2">
+              <Switch id="milestones" checked={showMilestones} onCheckedChange={setShowMilestones} />
+              <Label htmlFor="milestones" className="text-sm">Eventos, contratos e mídia</Label>
+            </div>
+          )}
         </div>
       </div>
 
@@ -160,7 +199,8 @@ function CalendarPage() {
               const key = iso(day);
               const dayEvents = filteredEvents.filter((e) => e.event_date === key);
               const dayTasks = deadlines.filter((t) => t.due_date === key);
-              const items = dayEvents.length + dayTasks.length;
+              const dayMarks = milestones.filter((m) => m.date === key);
+              const items = dayEvents.length + dayTasks.length + dayMarks.length;
               const inMonth = isSameMonth(day, cursor);
               return (
                 <div
@@ -212,6 +252,18 @@ function CalendarPage() {
                         <span className="truncate">{t.title}</span>
                       </button>
                     ))}
+                    {dayMarks.slice(0, Math.max(0, 3 - dayEvents.length - dayTasks.length)).map((m) => (
+                      <button
+                        key={m.key}
+                        type="button"
+                        onClick={m.go}
+                        title={`${m.kind}: ${m.title}`}
+                        className="flex w-full items-center gap-1 truncate rounded bg-amber-500/10 px-1 py-0.5 text-left text-[11px] text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
+                      >
+                        <Flag className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{m.title}</span>
+                      </button>
+                    ))}
                     {items > 3 && (
                       <button type="button" onClick={() => setView("lista")} className="px-1 text-[11px] text-primary hover:underline">
                         +{items - 3} mais
@@ -227,6 +279,7 @@ function CalendarPage() {
         <AgendaList
           events={filteredEvents}
           tasks={deadlines}
+          milestones={milestones}
           onEvent={setOpenEvent}
           onTask={setOpenTask}
           who={(id) => (id ? profileName(profiles, id) : "Sem responsável")}
@@ -256,20 +309,26 @@ function CalendarPage() {
 function AgendaList({
   events,
   tasks,
+  milestones,
   onEvent,
   onTask,
   who,
 }: {
   events: CalendarEventRow[];
   tasks: TaskRow[];
+  milestones: Milestone[];
   onEvent: (e: CalendarEventRow) => void;
   onTask: (t: TaskRow) => void;
   who: (id: string | null) => string;
 }) {
-  type Item = { date: string; time: string; kind: "event"; e: CalendarEventRow } | { date: string; time: string; kind: "task"; t: TaskRow };
+  type Item =
+    | { date: string; time: string; kind: "event"; e: CalendarEventRow }
+    | { date: string; time: string; kind: "task"; t: TaskRow }
+    | { date: string; time: string; kind: "mark"; m: Milestone };
   const items: Item[] = [
     ...events.map((e) => ({ date: e.event_date, time: e.start_time ?? "", kind: "event" as const, e })),
     ...tasks.map((t) => ({ date: t.due_date!, time: "99", kind: "task" as const, t })),
+    ...milestones.map((m) => ({ date: m.date, time: "00", kind: "mark" as const, m })),
   ].sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 
   if (items.length === 0) {
@@ -300,6 +359,17 @@ function AgendaList({
                       </span>
                     </span>
                     <Pill value={it.e.status} />
+                  </button>
+                </li>
+              ) : it.kind === "mark" ? (
+                <li key={it.m.key}>
+                  <button type="button" onClick={it.m.go} className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/40">
+                    <span className="w-12 text-xs text-amber-600 dark:text-amber-300">marco</span>
+                    <Flag className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">{it.m.title}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{it.m.kind}</span>
+                    </span>
                   </button>
                 </li>
               ) : (

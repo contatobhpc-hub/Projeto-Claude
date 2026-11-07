@@ -154,6 +154,7 @@ export type TaskRow = Stamped & {
   due_date: string | null;
   campaign_id: string | null;
   project_id: string | null;
+  event_id: string | null;
   labels: string[];
   position: number;
   completed_at: string | null;
@@ -208,6 +209,7 @@ export type ChecklistItemRow = {
   id: string;
   module: string;
   record_id: string;
+  group_label: string;
   text: string;
   done: boolean;
   position: number;
@@ -222,6 +224,151 @@ export type RecordHistoryRow = {
   changed_at: string;
   old_data: Json | null;
   new_data: Json | null;
+};
+
+
+// ---------------------------------------------------------------- Fase 3 — Relacionamento e materiais
+export type PartnerRow = Stamped & {
+  id: string;
+  company: string;
+  category: string;
+  status: string;
+  city: string;
+  contact_name: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  document: string;
+  owner_id: string | null;
+  counterparts: string;
+  investment_month: number;
+  expected_return: number;
+  delivered_return: number;
+  notes: string;
+};
+
+export type ContractRow = Stamped &
+  Approvable & {
+    id: string;
+    object: string;
+    partner_id: string | null;
+    company: string;
+    category: string;
+    status: string;
+    value: number;
+    cost_center: string;
+    start_date: string | null;
+    end_date: string | null;
+    renewal_date: string | null;
+    auto_renewal: boolean;
+    owner_id: string | null;
+    campaign_id: string | null;
+    notes: string;
+  };
+
+export type EventRow = Stamped & {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  priority: string;
+  event_date: string | null;
+  end_date: string | null;
+  start_time: string | null;
+  city: string;
+  venue: string;
+  agency: string;
+  assignee_id: string | null;
+  team_ids: string[];
+  partner_ids: string[];
+  campaign_id: string | null;
+  objective: string;
+  description: string;
+  budget: number;
+  expected_audience: number | null;
+  notes: string;
+};
+
+export type EventScheduleRow = { id: string; event_id: string; starts_at: string | null; title: string; owner_id: string | null; position: number; created_at: string };
+export type EventAttendeeRow = {
+  id: string; event_id: string; name: string; organization: string; role: string; email: string; phone: string;
+  confirmed: boolean; checked_in: boolean; created_at: string;
+};
+export type EventSupplierRow = {
+  id: string; event_id: string; partner_id: string | null; name: string; service: string; contact: string; value: number; created_at: string;
+};
+
+export type SponsorshipRow = Stamped & {
+  id: string;
+  event_name: string;
+  institution: string;
+  city: string;
+  category: string;
+  tier: string;
+  status: string;
+  value: number;
+  start_date: string | null;
+  end_date: string | null;
+  owner_id: string | null;
+  partner_id: string | null;
+  contract_id: string | null;
+  event_id: string | null;
+  campaign_id: string | null;
+  materials_deadline: string | null;
+  counterparts_deadline: string | null;
+  accounting_deadline: string | null;
+  report_summary: string;
+  expected_return: number;
+  delivered_return: number;
+  notes: string;
+};
+
+export type OfflineMediaRow = Stamped & {
+  id: string;
+  title: string;
+  categories: string[];
+  status: string;
+  city: string;
+  location: string;
+  supplier: string;
+  partner_id: string | null;
+  campaign_id: string | null;
+  project_id: string | null;
+  install_date: string | null;
+  removal_date: string | null;
+  owner_id: string | null;
+  value: number;
+  cost_center: string;
+  notes: string;
+};
+
+export type InventoryItemRow = Stamped & {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  supplier: string;
+  location: string;
+  unit_value: number;
+  min_quantity: number;
+  quantity: number;
+  reserved: number;
+  notes: string;
+};
+
+export type InventoryMovementRow = {
+  id: string;
+  item_id: string;
+  type: "Entrada" | "Saída" | "Reserva" | "Liberação" | "Inventário";
+  quantity: number;
+  delta: number;
+  reason: string;
+  destination: string;
+  from_reserve: boolean;
+  campaign_id: string | null;
+  event_id: string | null;
+  created_by: string | null;
+  created_at: string;
 };
 
 export type Database = {
@@ -250,6 +397,16 @@ export type Database = {
       content_versions: Table<ContentVersionRow>;
       content_favorites: Table<ContentFavoriteRow, Partial<ContentFavoriteRow> & Pick<ContentFavoriteRow, "content_id">>;
       checklist_items: Table<ChecklistItemRow, Partial<ChecklistItemRow> & Pick<ChecklistItemRow, "module" | "record_id" | "text">>;
+      partners: Table<PartnerRow, Partial<PartnerRow> & Pick<PartnerRow, "company">>;
+      contracts: Table<ContractRow, Partial<ContractRow> & Pick<ContractRow, "object">>;
+      events: Table<EventRow, Partial<EventRow> & Pick<EventRow, "name">>;
+      event_schedule: Table<EventScheduleRow, Partial<EventScheduleRow> & Pick<EventScheduleRow, "event_id" | "title">>;
+      event_attendees: Table<EventAttendeeRow, Partial<EventAttendeeRow> & Pick<EventAttendeeRow, "event_id" | "name">>;
+      event_suppliers: Table<EventSupplierRow, Partial<EventSupplierRow> & Pick<EventSupplierRow, "event_id" | "name">>;
+      sponsorships: Table<SponsorshipRow, Partial<SponsorshipRow> & Pick<SponsorshipRow, "event_name">>;
+      offline_media: Table<OfflineMediaRow, Partial<OfflineMediaRow> & Pick<OfflineMediaRow, "title">>;
+      inventory_items: Table<InventoryItemRow, Partial<InventoryItemRow> & Pick<InventoryItemRow, "name">>;
+      inventory_movements: Table<InventoryMovementRow, Partial<InventoryMovementRow> & Pick<InventoryMovementRow, "item_id" | "type" | "quantity">>;
     };
     Views: { [_ in never]: never };
     Functions: {
