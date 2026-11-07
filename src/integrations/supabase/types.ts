@@ -93,6 +93,137 @@ export type TrashRow = {
   purge_at: string;
 };
 
+
+// ---------------------------------------------------------------- Fase 2 — Operação
+type Stamped = {
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+export type ApprovalStatus = "Não solicitada" | "Aguardando" | "Aprovada" | "Reprovada";
+
+type Approvable = {
+  approval_status: ApprovalStatus;
+  approval_note: string;
+  approved_by: string | null;
+  approved_at: string | null;
+};
+
+export type CampaignRow = Stamped &
+  Approvable & {
+    id: string;
+    name: string;
+    type: string;
+    objective: string;
+    status: string;
+    priority: string;
+    description: string;
+    notes: string;
+    start_date: string | null;
+    end_date: string | null;
+    owner_id: string | null;
+    products: string[];
+    budget: number;
+  };
+
+export type ProjectRow = Stamped &
+  Approvable & {
+    id: string;
+    name: string;
+    campaign_id: string | null;
+    requester_area: string;
+    internal_client: string;
+    owner_id: string | null;
+    team_ids: string[];
+    due_date: string | null;
+    status: string;
+    priority: string;
+    description: string;
+  };
+
+export type TaskRow = Stamped & {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  assignee_id: string | null;
+  due_date: string | null;
+  campaign_id: string | null;
+  project_id: string | null;
+  labels: string[];
+  position: number;
+  completed_at: string | null;
+};
+
+export type CalendarEventRow = Stamped & {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+  priority: string;
+  event_date: string;
+  start_time: string | null;
+  duration_min: number | null;
+  description: string;
+  assignee_id: string | null;
+  participant_ids: string[];
+  agency: string;
+  campaign_id: string | null;
+  project_id: string | null;
+  task_id: string | null;
+};
+
+export type ContentItemRow = Stamped & {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+  description: string;
+  body: string;
+  tags: string[];
+  campaign_id: string | null;
+  project_id: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  review_note: string;
+};
+
+export type ContentVersionRow = {
+  id: string;
+  content_id: string;
+  version_no: number;
+  title: string;
+  body: string;
+  created_by: string | null;
+  created_at: string;
+};
+
+export type ContentFavoriteRow = { user_id: string; content_id: string; created_at: string };
+
+export type ChecklistItemRow = {
+  id: string;
+  module: string;
+  record_id: string;
+  text: string;
+  done: boolean;
+  position: number;
+  created_by: string | null;
+  created_at: string;
+};
+
+export type RecordHistoryRow = {
+  id: number;
+  action: AuditLogRow["action"];
+  changed_by: string | null;
+  changed_at: string;
+  old_data: Json | null;
+  new_data: Json | null;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -111,6 +242,14 @@ export type Database = {
       comments: Table<CommentRow, Partial<CommentRow> & Pick<CommentRow, "module" | "record_id" | "body">>;
       app_settings: Table<AppSettingRow, Partial<AppSettingRow> & Pick<AppSettingRow, "key" | "value">>;
       module_tables: Table<{ table_name: string; module: string; title_column: string }>;
+      campaigns: Table<CampaignRow, Partial<CampaignRow> & Pick<CampaignRow, "name">>;
+      projects: Table<ProjectRow, Partial<ProjectRow> & Pick<ProjectRow, "name">>;
+      tasks: Table<TaskRow, Partial<TaskRow> & Pick<TaskRow, "title">>;
+      calendar_events: Table<CalendarEventRow, Partial<CalendarEventRow> & Pick<CalendarEventRow, "title" | "event_date">>;
+      content_items: Table<ContentItemRow, Partial<ContentItemRow> & Pick<ContentItemRow, "title">>;
+      content_versions: Table<ContentVersionRow>;
+      content_favorites: Table<ContentFavoriteRow, Partial<ContentFavoriteRow> & Pick<ContentFavoriteRow, "content_id">>;
+      checklist_items: Table<ChecklistItemRow, Partial<ChecklistItemRow> & Pick<ChecklistItemRow, "module" | "record_id" | "text">>;
     };
     Views: { [_ in never]: never };
     Functions: {
@@ -122,6 +261,8 @@ export type Database = {
       restore_item: { Args: { _table: string; _id: string }; Returns: undefined };
       purge_item: { Args: { _table: string; _id: string }; Returns: undefined };
       purge_expired_trash: { Args: Record<string, never>; Returns: number };
+      decide_approval: { Args: { _table: string; _id: string; _decision: string; _note?: string }; Returns: undefined };
+      record_history: { Args: { _table: string; _id: string }; Returns: RecordHistoryRow[] };
     };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };

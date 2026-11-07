@@ -10,8 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as ProjetosIdRouteImport } from './routes/projetos_.$id'
+import { Route as ProjetosRouteImport } from './routes/projetos'
 import { Route as MinhaContaRouteImport } from './routes/minha-conta'
+import { Route as KanbanRouteImport } from './routes/kanban'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConteudosRouteImport } from './routes/conteudos'
+import { Route as CampanhasIdRouteImport } from './routes/campanhas_.$id'
+import { Route as CampanhasRouteImport } from './routes/campanhas'
+import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminLixeiraRouteImport } from './routes/admin.lixeira'
@@ -24,14 +31,49 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjetosIdRoute = ProjetosIdRouteImport.update({
+  id: '/projetos_/$id',
+  path: '/projetos/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjetosRoute = ProjetosRouteImport.update({
+  id: '/projetos',
+  path: '/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MinhaContaRoute = MinhaContaRouteImport.update({
   id: '/minha-conta',
   path: '/minha-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KanbanRoute = KanbanRouteImport.update({
+  id: '/kanban',
+  path: '/kanban',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConteudosRoute = ConteudosRouteImport.update({
+  id: '/conteudos',
+  path: '/conteudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhasIdRoute = CampanhasIdRouteImport.update({
+  id: '/campanhas_/$id',
+  path: '/campanhas/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampanhasRoute = CampanhasRouteImport.update({
+  id: '/campanhas',
+  path: '/campanhas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarioRoute = CalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -73,7 +115,14 @@ export interface FileRoutesByFullPath {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/campanhas': typeof CampanhasRoute
+  '/campanhas/$id': typeof CampanhasIdRoute
+  '/conteudos': typeof ConteudosRoute
+  '/kanban': typeof KanbanRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/projetos': typeof ProjetosRoute
+  '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
 }
 export interface FileRoutesByTo {
@@ -84,7 +133,14 @@ export interface FileRoutesByTo {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/campanhas': typeof CampanhasRoute
+  '/campanhas/$id': typeof CampanhasIdRoute
+  '/conteudos': typeof ConteudosRoute
+  '/kanban': typeof KanbanRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/projetos': typeof ProjetosRoute
+  '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
 }
 export interface FileRoutesById {
@@ -96,7 +152,14 @@ export interface FileRoutesById {
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/campanhas': typeof CampanhasRoute
+  '/campanhas_/$id': typeof CampanhasIdRoute
+  '/conteudos': typeof ConteudosRoute
+  '/kanban': typeof KanbanRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/projetos': typeof ProjetosRoute
+  '/projetos_/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
 }
 export interface FileRouteTypes {
@@ -109,7 +172,14 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/calendario'
+    | '/campanhas'
+    | '/campanhas/$id'
+    | '/conteudos'
+    | '/kanban'
     | '/minha-conta'
+    | '/projetos'
+    | '/projetos/$id'
     | '/redefinir-senha'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -120,7 +190,14 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/calendario'
+    | '/campanhas'
+    | '/campanhas/$id'
+    | '/conteudos'
+    | '/kanban'
     | '/minha-conta'
+    | '/projetos'
+    | '/projetos/$id'
     | '/redefinir-senha'
   id:
     | '__root__'
@@ -131,7 +208,14 @@ export interface FileRouteTypes {
     | '/admin/lixeira'
     | '/admin/usuarios'
     | '/auth'
+    | '/calendario'
+    | '/campanhas'
+    | '/campanhas_/$id'
+    | '/conteudos'
+    | '/kanban'
     | '/minha-conta'
+    | '/projetos'
+    | '/projetos_/$id'
     | '/redefinir-senha'
   fileRoutesById: FileRoutesById
 }
@@ -143,7 +227,14 @@ export interface RootRouteChildren {
   AdminLixeiraRoute: typeof AdminLixeiraRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
   AuthRoute: typeof AuthRoute
+  CalendarioRoute: typeof CalendarioRoute
+  CampanhasRoute: typeof CampanhasRoute
+  CampanhasIdRoute: typeof CampanhasIdRoute
+  ConteudosRoute: typeof ConteudosRoute
+  KanbanRoute: typeof KanbanRoute
   MinhaContaRoute: typeof MinhaContaRoute
+  ProjetosRoute: typeof ProjetosRoute
+  ProjetosIdRoute: typeof ProjetosIdRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
 }
 
@@ -156,6 +247,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projetos_/$id': {
+      id: '/projetos_/$id'
+      path: '/projetos/$id'
+      fullPath: '/projetos/$id'
+      preLoaderRoute: typeof ProjetosIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projetos': {
+      id: '/projetos'
+      path: '/projetos'
+      fullPath: '/projetos'
+      preLoaderRoute: typeof ProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/minha-conta': {
       id: '/minha-conta'
       path: '/minha-conta'
@@ -163,11 +268,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MinhaContaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kanban': {
+      id: '/kanban'
+      path: '/kanban'
+      fullPath: '/kanban'
+      preLoaderRoute: typeof KanbanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conteudos': {
+      id: '/conteudos'
+      path: '/conteudos'
+      fullPath: '/conteudos'
+      preLoaderRoute: typeof ConteudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanhas_/$id': {
+      id: '/campanhas_/$id'
+      path: '/campanhas/$id'
+      fullPath: '/campanhas/$id'
+      preLoaderRoute: typeof CampanhasIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campanhas': {
+      id: '/campanhas'
+      path: '/campanhas'
+      fullPath: '/campanhas'
+      preLoaderRoute: typeof CampanhasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendario': {
+      id: '/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof CalendarioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -223,7 +363,14 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLixeiraRoute: AdminLixeiraRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
   AuthRoute: AuthRoute,
+  CalendarioRoute: CalendarioRoute,
+  CampanhasRoute: CampanhasRoute,
+  CampanhasIdRoute: CampanhasIdRoute,
+  ConteudosRoute: ConteudosRoute,
+  KanbanRoute: KanbanRoute,
   MinhaContaRoute: MinhaContaRoute,
+  ProjetosRoute: ProjetosRoute,
+  ProjetosIdRoute: ProjetosIdRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
 }
 export const routeTree = rootRouteImport

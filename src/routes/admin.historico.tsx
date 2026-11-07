@@ -33,6 +33,11 @@ const TABLE_LABELS: Record<string, string> = {
   role_permissions: "Permissões",
   attachments: "Anexos",
   app_settings: "Configurações",
+  campaigns: "Campanhas",
+  projects: "Projetos",
+  tasks: "Tarefas",
+  calendar_events: "Calendário",
+  content_items: "Conteúdos",
 };
 
 const ACTION_LABELS: Record<AuditLogRow["action"], { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {

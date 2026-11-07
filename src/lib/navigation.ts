@@ -42,7 +42,7 @@ export type NavItem = {
 export type NavGroup = { label: string; items: NavItem[] };
 
 /** Fase atualmente entregue. Itens de fases posteriores ficam desabilitados no menu. */
-export const CURRENT_PHASE = 1;
+export const CURRENT_PHASE = 2;
 
 export const navGroups: NavGroup[] = [
   {

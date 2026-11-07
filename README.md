@@ -19,10 +19,29 @@ Plano completo: documento "Marketing Hub 2.0 — Plano de reconstrução".
 | Anexos e comentários | Componentes prontos para todos os módulos (`RecordAttachments`, `RecordComments`) |
 | Menu por cargo | Cada pessoa só vê os módulos liberados; módulos das próximas fases aparecem como "em breve" |
 
+## Fase 2 — Operação
+
+| Tela | O que faz |
+| --- | --- |
+| Campanhas | Lista com filtros e totais; detalhe com projetos, tarefas, agenda, conteúdos, arquivos, comentários, histórico e aprovação |
+| Projetos | Lista com andamento calculado pelas tarefas; detalhe com checklist, tarefas, agenda, conteúdos, arquivos, comentários, histórico e aprovação |
+| Kanban | Todas as tarefas em 6 colunas, arrastar e soltar, filtros por pessoa/campanha/projeto; cartão com checklist, arquivos e comentários |
+| Calendário | Mês e lista, filtros por categoria e "só os meus", prazos das tarefas no mesmo calendário |
+| Conteúdos | Biblioteca por categoria, favoritos individuais, versões automáticas e fluxo de aprovação |
+| Dashboard | Minhas tarefas, agenda da semana, atrasos da equipe e o que espera a sua aprovação |
+
+Regras aplicadas no banco (`supabase/migrations/20261107000001_operacao.sql`):
+
+- **Aprovação de campanhas e projetos:** quem edita pede aprovação; só quem tem "Aprovar" decide (Diretoria aprova sem poder editar).
+- **Conteúdos:** só aprovadores aprovam; publicar só depois de aprovado; editar um texto aprovado faz ele voltar para revisão.
+- **Colaborador no Kanban/Calendário:** atualiza status e descrição só do que está atribuído a ele, e anexa/comenta nesses itens.
+- **Versões de conteúdo:** gravadas automaticamente a cada alteração de título ou texto.
+
 ## Como colocar no ar
 
-1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode o
-   conteúdo de `supabase/migrations/20261106000001_fundacao.sql`.
+1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode os
+   arquivos de `supabase/migrations/` **em ordem** (primeiro `20261106000001_fundacao.sql`,
+   depois `20261107000001_operacao.sql`).
    (Ou, com a CLI: `npx supabase link --project-ref <id>` e `npx supabase db push`.)
 2. **Autenticação:** em *Authentication → URL Configuration*, coloque o endereço
    do app em *Site URL* e acrescente `<endereço>/redefinir-senha` em *Redirect URLs*.
@@ -60,8 +79,9 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (19 casos: autopromoção, colaborador editando tarefa de
-outro, analista excluindo, último administrador, domínio de cadastro etc.).
+os cenários de permissão (38 casos: autopromoção, colaborador editando tarefa de
+outro, analista excluindo, último administrador, domínio de cadastro, aprovações
+de campanha e conteúdo etc.).
 Rode-o sempre que mudar uma migração.
 
 ## Diferenças em relação ao app antigo
