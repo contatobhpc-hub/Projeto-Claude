@@ -79,7 +79,7 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (38 casos: autopromoção, colaborador editando tarefa de
+os cenários de permissão (49 casos: autopromoção, colaborador editando tarefa de
 outro, analista excluindo, último administrador, domínio de cadastro, aprovações
 de campanha e conteúdo etc.).
 Rode-o sempre que mudar uma migração.
