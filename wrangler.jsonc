@@ -1,0 +1,15 @@
+// Publicação na Cloudflare (Workers). O build gera .output/ (servidor + arquivos estáticos).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "marketing-hub",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": ".output/public", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  // Endereço e chave PÚBLICA do Supabase (feita para o navegador). Nunca coloque a chave secreta aqui.
+  "vars": {
+    "SUPABASE_URL": "https://yspvlkklsyvkapxthdyv.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_7VVvL6xfjKv7JQUbmc5ARA_LTDVyX5Q"
+  }
+}
