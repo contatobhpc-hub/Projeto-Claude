@@ -6,17 +6,7 @@ begin
   perform set_config('request.jwt.claim.sub', coalesce(_uid::text, ''), false);
 end $$;
 
--- Sample module table, as Phase 2+ will create
-create table public.tasks (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  assignee_id uuid references auth.users(id),
-  created_by uuid, updated_by uuid,
-  created_at timestamptz default now(), updated_at timestamptz default now(),
-  deleted_at timestamptz
-);
-grant all on public.tasks to authenticated;
-select public.register_module_table('public.tasks', 'kanban');
+-- A tabela tasks vem da migração da Fase 2 (já registrada no módulo kanban).
 
 -- Users: first signup becomes admin
 insert into auth.users (id, email, raw_user_meta_data) values
@@ -66,9 +56,9 @@ update tasks set deleted_at = now() where title='Post Instagram';
 
 \echo '== 8. Colaborador edita tarefa atribuída a ele (espera 1 linha)'
 select test_as('00000000-0000-0000-0000-00000000000c');
-update tasks set title = 'Arte do Dia C (v2)' where title='Arte do Dia C';
+update tasks set status = 'Em andamento' where title='Arte do Dia C';
 \echo '== 8b. Colaborador tenta editar tarefa de outro (espera UPDATE 0)'
-update tasks set title = 'hack' where title='Post Instagram';
+update tasks set status = 'Cancelado' where title='Post Instagram';
 \echo '== 8c. Colaborador tenta criar tarefa (espera ERRO)'
 insert into tasks (title) values ('não devia');
 

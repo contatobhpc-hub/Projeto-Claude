@@ -25,6 +25,7 @@ import {
   History,
   Trash2,
   Settings,
+  DatabaseBackup,
   type LucideIcon,
 } from "lucide-react";
 
@@ -42,7 +43,7 @@ export type NavItem = {
 export type NavGroup = { label: string; items: NavItem[] };
 
 /** Fase atualmente entregue. Itens de fases posteriores ficam desabilitados no menu. */
-export const CURRENT_PHASE = 1;
+export const CURRENT_PHASE = 5;
 
 export const navGroups: NavGroup[] = [
   {
@@ -109,6 +110,7 @@ export const navGroups: NavGroup[] = [
       { title: "Histórico de alterações", to: "/admin/historico", icon: History, module: "admin", phase: 1 },
       { title: "Lixeira", to: "/admin/lixeira", icon: Trash2, module: "admin", phase: 1 },
       { title: "Configurações", to: "/admin/configuracoes", icon: Settings, module: "admin", phase: 1 },
+      { title: "Importar do app antigo", to: "/admin/importar", icon: DatabaseBackup, module: "admin", phase: 5 },
     ],
   },
 ];

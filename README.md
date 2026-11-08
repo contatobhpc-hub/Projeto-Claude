@@ -19,10 +19,115 @@ Plano completo: documento "Marketing Hub 2.0 — Plano de reconstrução".
 | Anexos e comentários | Componentes prontos para todos os módulos (`RecordAttachments`, `RecordComments`) |
 | Menu por cargo | Cada pessoa só vê os módulos liberados; módulos das próximas fases aparecem como "em breve" |
 
+## Fase 2 — Operação
+
+| Tela | O que faz |
+| --- | --- |
+| Campanhas | Lista com filtros e totais; detalhe com projetos, tarefas, agenda, conteúdos, arquivos, comentários, histórico e aprovação |
+| Projetos | Lista com andamento calculado pelas tarefas; detalhe com checklist, tarefas, agenda, conteúdos, arquivos, comentários, histórico e aprovação |
+| Kanban | Todas as tarefas em 6 colunas, arrastar e soltar, filtros por pessoa/campanha/projeto; cartão com checklist, arquivos e comentários |
+| Calendário | Mês e lista, filtros por categoria e "só os meus", prazos das tarefas no mesmo calendário |
+| Conteúdos | Biblioteca por categoria, favoritos individuais, versões automáticas e fluxo de aprovação |
+| Dashboard | Minhas tarefas, agenda da semana, atrasos da equipe e o que espera a sua aprovação |
+
+Regras aplicadas no banco (`supabase/migrations/20261107000001_operacao.sql`):
+
+- **Aprovação de campanhas e projetos:** quem edita pede aprovação; só quem tem "Aprovar" decide (Diretoria aprova sem poder editar).
+- **Conteúdos:** só aprovadores aprovam; publicar só depois de aprovado; editar um texto aprovado faz ele voltar para revisão.
+- **Colaborador no Kanban/Calendário:** atualiza status e descrição só do que está atribuído a ele, e anexa/comenta nesses itens.
+- **Versões de conteúdo:** gravadas automaticamente a cada alteração de título ou texto.
+
+## Fase 3 — Relacionamento e materiais
+
+| Tela | O que faz |
+| --- | --- |
+| Parceiros | Cadastro com contato (WhatsApp, telefone, e-mail), investimento e retorno; página com contratos, patrocínios, eventos e mídia do parceiro |
+| Contratos | Alertas de vencimento (vencidos, 30 e 90 dias), aprovação da Diretoria, checklist, PDF e anexos |
+| Eventos | Checklist por grupo (Arte, Convite, Coffee…), cronograma, convidados com confirmação/presença e planilha, fornecedores × orçamento, brindes e tarefas |
+| Patrocínios | Verba anual × comprometido × realizado, gastos por categoria, prazos (materiais, contrapartidas, prestação de contas), contrapartidas e importação de planilha |
+| Mídia Offline | Formatos, local, período e alertas de retirada; arte e fotos anexadas |
+| Brindes | Estoque com entradas, saídas, reservas para eventos e inventário; saldo só muda por movimentação |
+| Calendário | Passa a mostrar eventos, vencimentos de contratos e instalação/retirada de mídia |
+| Dashboard | Quadro "Precisa de atenção" com contratos vencendo, estoque baixo, mídia a retirar e prazos de patrocínio |
+| Configurações | Listas de categorias (parceiros, contratos, mídia) e verba anual de patrocínios |
+
+Regras no banco (`supabase/migrations/20261107000002_relacionamento.sql`):
+
+- **Estoque:** o saldo é calculado só pelas movimentações, com bloqueio de saldo negativo; movimentações não são editadas nem apagadas.
+- **Contratos:** aprovação no mesmo fluxo de campanhas e projetos.
+- **Patrocínios:** a mesma linha (evento + instituição + data) não entra duas vezes.
+- **Eventos:** o responsável com cargo Colaborador edita checklist, cronograma e convidados do próprio evento.
+
+Carga opcional: `supabase/seed/patrocinios_2026.sql` traz os 51 patrocínios da planilha "Controle de Patrocínios" (R$ 65.370,61; verba de R$ 250.000 já configurada).
+
+## Fase 4 — Financeiro
+
+Fluxo encadeado: **Solicitação de compra → aprovação → nota fiscal → aprovação da nota → pagamento agendado → pago → despesa realizada** (lançada automaticamente). Fornecedores são os Parceiros.
+
+| Tela | O que faz |
+| --- | --- |
+| Financeiro › Visão geral | Aprovado × comprometido × realizado × disponível do ano, barras por categoria e alertas (≥ 80% do orçamento, gasto sem orçamento, pagamentos atrasados ou vencendo, notas a aprovar) |
+| Financeiro › Orçamento | Linhas por categoria (e centro de custo): proposto pela equipe, aprovado só por aprovadores, saldo |
+| Financeiro › Notas fiscais | Lançamento com PDF/XML, aprovação que já agenda o pagamento, exportação para Excel |
+| Financeiro › Pagamentos | A pagar, atrasados e pagos; registrar pagamento lança a despesa; estorno só por aprovadores |
+| Financeiro › Despesas | Realizado do ano (automático e manual), exportação para Excel |
+| Financeiro › Fornecedores e Centros de custo | Total pago e em aberto por fornecedor, avaliação; cadastro de centros de custo |
+| Solicitações de compra | Pedido, alçada, aprovações com parecer, compra, recebimento, nota e conclusão |
+| Campanhas e Eventos | Passam a mostrar o gasto realizado ao lado do orçamento |
+
+Controles no banco (`supabase/migrations/20261107000003_financeiro.sql`):
+
+- **Alçada:** até o limite (Configurações, padrão R$ 5.000) uma aprovação basta; acima, Gestor e depois Diretoria.
+- **Segregação de funções:** quem pede não aprova o próprio pedido; ninguém decide duas vezes o mesmo pedido.
+- **Imutabilidade:** pedido enviado não muda de valor; nota aprovada não muda valor/fornecedor/número; nota paga não é cancelada.
+- **Orçamento:** o valor aprovado só muda por quem tem "Aprovar" no Financeiro.
+- **Notas duplicadas** (mesmo número e fornecedor) são recusadas.
+
+## Fase 5 — Inteligência
+
+| Tela | O que faz |
+| --- | --- |
+| Prioridades | O que pede ação hoje: atrasados, vencendo, aprovações pendentes para você, estoque baixo, contratos a renovar |
+| Notificações (sino no topo) | Avisos de atribuição, aprovação, decisão, prazos e alertas diários; marcar como lido |
+| Planejamento | Objetivos estratégicos por ano e perspectiva, resultados-chave com meta e progresso, campanhas ligadas ao objetivo, aprovação do plano |
+| Indicadores | Indicadores com meta, lançamentos mensais e gráfico; um resultado-chave pode seguir um indicador automaticamente |
+| Analytics | Produção da equipe por mês (tarefas, entregas no prazo, conteúdos, eventos, gasto) e rankings, exportação para Excel |
+| Workflows | Regras "quando acontecer X, faça Y" (criar tarefa, avisar alguém, incluir checklist), modelos prontos e registro das execuções |
+| Central IA | Assistente com o Claude: modelos de pedido, contexto de campanha/projeto, salvar resposta como conteúdo, modelos da equipe, limite mensal |
+| Administração › Importar do app antigo | Lê o backup .json do app antigo e traz todos os módulos mantendo vínculos, status e valores |
+
+No banco (`supabase/migrations/20261107000004_inteligencia.sql`): notificações geradas por gatilhos e por uma varredura diária
+(`generate_due_notifications`, agendada pelo `pg_cron` quando disponível; senão o app dispara uma vez por dia),
+workflows executados no servidor, conversas da IA privadas de cada usuário e a importação (`import_rows`, só Administrador)
+que mantém os dados originais sem disparar aprovações, pagamentos ou avisos.
+
+### Ligar a Central IA
+
+A chave da Anthropic fica só no Supabase (nunca no `.env` do app):
+
+```bash
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+npx supabase functions deploy ai-chat
+```
+
+Modelo, limite de perguntas por mês e contexto da cooperativa ficam em *Administração → Configurações* (chave `ai`).
+
+### Trazer os dados do app antigo
+
+1. No app antigo: *Configurações → Backup* → baixar o backup completo (.json).
+2. No app novo: cadastre e libere os usuários da equipe (os responsáveis são ligados pelo nome ou e-mail).
+3. *Administração → Importar do app antigo*: escolha o arquivo, confira a prévia e importe **uma vez**.
+
+Não vêm: anexos (o backup antigo só guardava o nome), histórico de movimentações de brindes (vem o saldo),
+workflows, conversas da IA e notificações antigas.
+
 ## Como colocar no ar
 
-1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode o
-   conteúdo de `supabase/migrations/20261106000001_fundacao.sql`.
+1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode os
+   arquivos de `supabase/migrations/` **em ordem** (primeiro `20261106000001_fundacao.sql`,
+   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`, depois `20261107000003_financeiro.sql`, depois `20261107000004_inteligencia.sql`).
+   Para a Central IA, veja "Ligar a Central IA" acima.
+   Se quiser os patrocínios de 2026, rode também `supabase/seed/patrocinios_2026.sql`.
    (Ou, com a CLI: `npx supabase link --project-ref <id>` e `npx supabase db push`.)
 2. **Autenticação:** em *Authentication → URL Configuration*, coloque o endereço
    do app em *Site URL* e acrescente `<endereço>/redefinir-senha` em *Redirect URLs*.
@@ -60,8 +165,9 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (19 casos: autopromoção, colaborador editando tarefa de
-outro, analista excluindo, último administrador, domínio de cadastro etc.).
+os cenários de permissão (96 casos: autopromoção, colaborador editando tarefa de
+outro, analista excluindo, último administrador, domínio de cadastro, aprovações
+de campanha, conteúdo e contrato, estoque, convidados de evento, alçada e segregação de compras, fluxo nota → pagamento → despesa, notificações, workflows, privacidade da IA e importação etc.).
 Rode-o sempre que mudar uma migração.
 
 ## Diferenças em relação ao app antigo
