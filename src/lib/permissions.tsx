@@ -7,6 +7,7 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from "r
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { channelName } from "@/lib/data";
 import type { MyPermissionRow, ProfileRow, RoleRow } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -103,7 +104,7 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!uid) return;
     const channel = supabase
-      .channel(`permissions-${uid}`)
+      .channel(channelName(`permissions-${uid}`))
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `id=eq.${uid}` }, () => {
         void qc.invalidateQueries({ queryKey: permissionsKeys.all });
       })

@@ -2,7 +2,7 @@
 // Não existe cópia no navegador: o React Query só guarda o que veio do banco
 // e é invalidado quando qualquer pessoa da equipe altera a tabela.
 
-import { useEffect, useId } from "react";
+import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -44,13 +44,23 @@ export type LiveTable =
   | "ai_messages"
   | "ai_prompts";
 
+let channelSeq = 0;
+/**
+ * Nome único para cada assinatura de tempo real. O Supabase reaproveita um canal com o mesmo nome
+ * enquanto o anterior ainda está fechando, e aí recusa novos ouvintes ("cannot add postgres_changes
+ * callbacks after subscribe()"), o que derrubava a página.
+ */
+export function channelName(base: string) {
+  channelSeq += 1;
+  return `${base}-${channelSeq}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 /** Mantém as consultas de uma tabela atualizadas quando alguém da equipe altera algo. */
 export function useLiveTable(table: LiveTable) {
   const qc = useQueryClient();
-  const uid = useId();
   useEffect(() => {
     const ch = supabase
-      .channel(`live-${table}-${uid}`)
+      .channel(channelName(`live-${table}`))
       .on("postgres_changes", { event: "*", schema: "public", table }, () => {
         void qc.invalidateQueries({ queryKey: [table] });
       })
@@ -58,7 +68,7 @@ export function useLiveTable(table: LiveTable) {
     return () => {
       void supabase.removeChannel(ch);
     };
-  }, [table, uid, qc]);
+  }, [table, qc]);
 }
 
 // O cliente tipado do Supabase não aceita nomes de tabela dinâmicos; centralizamos o cast aqui.

@@ -1,6 +1,6 @@
 // Fase 4 — Financeiro: valores, consultas e regras de apresentação.
 
-import { useEffect, useId } from "react";
+import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,7 @@ import type {
   PurchaseApprovalRow,
   PurchaseRequestRow,
 } from "@/integrations/supabase/types";
-import { useLiveTable, useRows, type RowFilter } from "@/lib/data";
+import { channelName, useLiveTable, useRows, type RowFilter } from "@/lib/data";
 import { todayISO } from "@/lib/operacao";
 import { useAppSettings } from "@/lib/relacionamento";
 
@@ -101,9 +101,8 @@ export function usePurchaseApprovals(requestId: string | undefined) {
 export function useBudgetOverview(year: number, enabled = true) {
   // Depende de várias tabelas; atualiza quando qualquer uma delas muda
   const qc = useQueryClient();
-  const uid = useId();
   useEffect(() => {
-    let ch = supabase.channel(`budget-overview-${uid}`);
+    let ch = supabase.channel(channelName("budget-overview"));
     for (const table of ["budget_lines", "expenses", "invoices", "purchase_requests", "payments"]) {
       ch = ch.on("postgres_changes", { event: "*", schema: "public", table }, () => {
         void qc.invalidateQueries({ queryKey: ["budget-overview"] });
@@ -113,7 +112,7 @@ export function useBudgetOverview(year: number, enabled = true) {
     return () => {
       void supabase.removeChannel(ch);
     };
-  }, [qc, uid]);
+  }, [qc]);
   return useQuery({
     queryKey: ["budget-overview", year],
     enabled,

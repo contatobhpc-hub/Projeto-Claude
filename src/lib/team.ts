@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { channelName } from "@/lib/data";
 import type { ModuleRow, ProfileRow, RolePermissionRow, RoleRow } from "@/integrations/supabase/types";
 
 export const teamKeys = {
@@ -18,7 +19,7 @@ export function useProfiles() {
   const qc = useQueryClient();
   useEffect(() => {
     const ch = supabase
-      .channel("team-profiles")
+      .channel(channelName("team-profiles"))
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => {
         void qc.invalidateQueries({ queryKey: teamKeys.profiles });
       })

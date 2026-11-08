@@ -8,6 +8,7 @@ import { Loader2, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { channelName } from "@/lib/data";
 import type { CommentRow } from "@/integrations/supabase/types";
 import { usePermissions, type ModuleKey } from "@/lib/permissions";
 import { profileName, useProfiles } from "@/lib/team";
@@ -41,7 +42,7 @@ export function RecordComments({ module, recordId }: { module: ModuleKey; record
 
   useEffect(() => {
     const ch = supabase
-      .channel(`comments-${module}-${recordId}`)
+      .channel(channelName(`comments-${module}-${recordId}`))
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "comments", filter: `record_id=eq.${recordId}` },
