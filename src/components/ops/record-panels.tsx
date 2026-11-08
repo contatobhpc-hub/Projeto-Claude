@@ -249,7 +249,7 @@ export function ApprovalPanel({
   module,
   record,
 }: {
-  table: "campaigns" | "projects" | "contracts";
+  table: "campaigns" | "projects" | "contracts" | "strategic_objectives";
   module: ModuleKey;
   record: { id: string; approval_status: ApprovalStatus; approval_note: string; approved_by: string | null; approved_at: string | null };
 }) {

@@ -6,6 +6,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar, initialsOf } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationsBell } from "@/components/notifications-bell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <SidebarTrigger className="press text-muted-foreground transition-colors hover:text-foreground" />
 
             <div className="ml-auto flex items-center gap-1.5">
+              <NotificationsBell />
               <ThemeToggle />
 
               <DropdownMenu>

@@ -32,7 +32,17 @@ export type LiveTable =
   | "purchase_approvals"
   | "invoices"
   | "payments"
-  | "expenses";
+  | "expenses"
+  | "notifications"
+  | "strategic_objectives"
+  | "key_results"
+  | "indicators"
+  | "indicator_values"
+  | "workflow_rules"
+  | "workflow_runs"
+  | "ai_conversations"
+  | "ai_messages"
+  | "ai_prompts";
 
 /** Mantém as consultas de uma tabela atualizadas quando alguém da equipe altera algo. */
 export function useLiveTable(table: LiveTable) {

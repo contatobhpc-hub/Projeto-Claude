@@ -83,11 +83,50 @@ Controles no banco (`supabase/migrations/20261107000003_financeiro.sql`):
 - **Orçamento:** o valor aprovado só muda por quem tem "Aprovar" no Financeiro.
 - **Notas duplicadas** (mesmo número e fornecedor) são recusadas.
 
+## Fase 5 — Inteligência
+
+| Tela | O que faz |
+| --- | --- |
+| Prioridades | O que pede ação hoje: atrasados, vencendo, aprovações pendentes para você, estoque baixo, contratos a renovar |
+| Notificações (sino no topo) | Avisos de atribuição, aprovação, decisão, prazos e alertas diários; marcar como lido |
+| Planejamento | Objetivos estratégicos por ano e perspectiva, resultados-chave com meta e progresso, campanhas ligadas ao objetivo, aprovação do plano |
+| Indicadores | Indicadores com meta, lançamentos mensais e gráfico; um resultado-chave pode seguir um indicador automaticamente |
+| Analytics | Produção da equipe por mês (tarefas, entregas no prazo, conteúdos, eventos, gasto) e rankings, exportação para Excel |
+| Workflows | Regras "quando acontecer X, faça Y" (criar tarefa, avisar alguém, incluir checklist), modelos prontos e registro das execuções |
+| Central IA | Assistente com o Claude: modelos de pedido, contexto de campanha/projeto, salvar resposta como conteúdo, modelos da equipe, limite mensal |
+| Administração › Importar do app antigo | Lê o backup .json do app antigo e traz todos os módulos mantendo vínculos, status e valores |
+
+No banco (`supabase/migrations/20261107000004_inteligencia.sql`): notificações geradas por gatilhos e por uma varredura diária
+(`generate_due_notifications`, agendada pelo `pg_cron` quando disponível; senão o app dispara uma vez por dia),
+workflows executados no servidor, conversas da IA privadas de cada usuário e a importação (`import_rows`, só Administrador)
+que mantém os dados originais sem disparar aprovações, pagamentos ou avisos.
+
+### Ligar a Central IA
+
+A chave da Anthropic fica só no Supabase (nunca no `.env` do app):
+
+```bash
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+npx supabase functions deploy ai-chat
+```
+
+Modelo, limite de perguntas por mês e contexto da cooperativa ficam em *Administração → Configurações* (chave `ai`).
+
+### Trazer os dados do app antigo
+
+1. No app antigo: *Configurações → Backup* → baixar o backup completo (.json).
+2. No app novo: cadastre e libere os usuários da equipe (os responsáveis são ligados pelo nome ou e-mail).
+3. *Administração → Importar do app antigo*: escolha o arquivo, confira a prévia e importe **uma vez**.
+
+Não vêm: anexos (o backup antigo só guardava o nome), histórico de movimentações de brindes (vem o saldo),
+workflows, conversas da IA e notificações antigas.
+
 ## Como colocar no ar
 
 1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode os
    arquivos de `supabase/migrations/` **em ordem** (primeiro `20261106000001_fundacao.sql`,
-   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`, depois `20261107000003_financeiro.sql`).
+   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`, depois `20261107000003_financeiro.sql`, depois `20261107000004_inteligencia.sql`).
+   Para a Central IA, veja "Ligar a Central IA" acima.
    Se quiser os patrocínios de 2026, rode também `supabase/seed/patrocinios_2026.sql`.
    (Ou, com a CLI: `npx supabase link --project-ref <id>` e `npx supabase db push`.)
 2. **Autenticação:** em *Authentication → URL Configuration*, coloque o endereço
@@ -126,9 +165,9 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (83 casos: autopromoção, colaborador editando tarefa de
+os cenários de permissão (96 casos: autopromoção, colaborador editando tarefa de
 outro, analista excluindo, último administrador, domínio de cadastro, aprovações
-de campanha, conteúdo e contrato, estoque, convidados de evento, alçada e segregação de compras, fluxo nota → pagamento → despesa etc.).
+de campanha, conteúdo e contrato, estoque, convidados de evento, alçada e segregação de compras, fluxo nota → pagamento → despesa, notificações, workflows, privacidade da IA e importação etc.).
 Rode-o sempre que mudar uma migração.
 
 ## Diferenças em relação ao app antigo

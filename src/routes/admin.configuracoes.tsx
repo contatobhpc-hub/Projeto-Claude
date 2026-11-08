@@ -48,6 +48,9 @@ function SettingsPage() {
   const [limit, setLimit] = useState("");
   const [budgetCats, setBudgetCats] = useState("");
   const [expenseCats, setExpenseCats] = useState("");
+  const [aiModel, setAiModel] = useState("");
+  const [aiLimit, setAiLimit] = useState("");
+  const [aiContext, setAiContext] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -65,6 +68,10 @@ function SettingsPage() {
     setLimit(moneyInput(fin.purchase_approval_limit));
     setBudgetCats(fin.budget_categories.join("\n"));
     setExpenseCats(fin.expense_categories.join("\n"));
+    const ai = (data.ai ?? {}) as { model?: string; monthly_message_limit?: number; org_context?: string };
+    setAiModel(ai.model ?? "claude-sonnet-5-5");
+    setAiLimit(String(ai.monthly_message_limit ?? 300));
+    setAiContext(ai.org_context ?? "");
     setBudgets(
       Object.entries(sb)
         .sort(([a], [b]) => b.localeCompare(a))
@@ -97,8 +104,13 @@ function SettingsPage() {
     const lim = parseMoney(limit);
     if (Number.isNaN(lim) || lim < 0) return void toast.error("Alçada de compras inválida.");
 
+    const aiLim = Number(aiLimit);
+    if (!Number.isInteger(aiLim) || aiLim < 0) return void toast.error("Limite da Central IA: use um número inteiro (0 = sem limite).");
+    if (!aiModel.trim()) return void toast.error("Informe o modelo da Central IA.");
+
     setBusy(true);
     const { error } = await supabase.from("app_settings").upsert([
+      { key: "ai", value: { model: aiModel.trim(), monthly_message_limit: aiLim, org_context: aiContext.trim() } as unknown as Json },
       { key: "organization", value: { name: orgName.trim(), area: area.trim() } as unknown as Json },
       { key: "signup", value: { allowed_domains: domainList } as unknown as Json },
       { key: "lists", value: { partner_categories: pc, contract_categories: cc, media_categories: mc } as unknown as Json },
@@ -205,6 +217,29 @@ function SettingsPage() {
               <Label htmlFor="ec">Categorias de despesa</Label>
               <Textarea id="ec" rows={10} value={expenseCats} onChange={(e) => setExpenseCats(e.target.value)} disabled={isLoading} />
             </div>
+          </div>
+        </section>
+
+        <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
+          <div>
+            <h2 className="font-display text-base font-semibold">Central IA</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              A chave da Anthropic fica só no servidor (segredo ANTHROPIC_API_KEY do Supabase). O limite vale por pessoa, por mês.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="aim">Modelo</Label>
+              <Input id="aim" value={aiModel} onChange={(e) => setAiModel(e.target.value)} disabled={isLoading} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ail">Perguntas por pessoa no mês (0 = sem limite)</Label>
+              <Input id="ail" className="w-32" inputMode="numeric" value={aiLimit} onChange={(e) => setAiLimit(e.target.value)} disabled={isLoading} />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="aic">Contexto da cooperativa (a IA lê antes de cada resposta)</Label>
+            <Textarea id="aic" rows={4} value={aiContext} onChange={(e) => setAiContext(e.target.value)} disabled={isLoading} />
           </div>
         </section>
 

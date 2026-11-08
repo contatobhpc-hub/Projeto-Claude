@@ -9,15 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkflowsRouteImport } from './routes/workflows'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ProjetosIdRouteImport } from './routes/projetos_.$id'
 import { Route as ProjetosRouteImport } from './routes/projetos'
+import { Route as PrioridadesRouteImport } from './routes/prioridades'
+import { Route as PlanejamentoRouteImport } from './routes/planejamento'
 import { Route as PatrociniosRouteImport } from './routes/patrocinios'
 import { Route as ParceirosIdRouteImport } from './routes/parceiros_.$id'
 import { Route as ParceirosRouteImport } from './routes/parceiros'
+import { Route as NotificacoesRouteImport } from './routes/notificacoes'
 import { Route as MinhaContaRouteImport } from './routes/minha-conta'
 import { Route as MidiaOfflineRouteImport } from './routes/midia-offline'
 import { Route as KanbanRouteImport } from './routes/kanban'
+import { Route as IndicadoresRouteImport } from './routes/indicadores'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as EventosIdRouteImport } from './routes/eventos_.$id'
@@ -26,17 +31,25 @@ import { Route as ContratosIdRouteImport } from './routes/contratos_.$id'
 import { Route as ContratosRouteImport } from './routes/contratos'
 import { Route as ConteudosRouteImport } from './routes/conteudos'
 import { Route as ComprasRouteImport } from './routes/compras'
+import { Route as CentralIaRouteImport } from './routes/central-ia'
 import { Route as CampanhasIdRouteImport } from './routes/campanhas_.$id'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as BrindesRouteImport } from './routes/brindes'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as AdminLixeiraRouteImport } from './routes/admin.lixeira'
+import { Route as AdminImportarRouteImport } from './routes/admin.importar'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AdminCargosRouteImport } from './routes/admin.cargos'
 
+const WorkflowsRoute = WorkflowsRouteImport.update({
+  id: '/workflows',
+  path: '/workflows',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   id: '/redefinir-senha',
   path: '/redefinir-senha',
@@ -50,6 +63,16 @@ const ProjetosIdRoute = ProjetosIdRouteImport.update({
 const ProjetosRoute = ProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrioridadesRoute = PrioridadesRouteImport.update({
+  id: '/prioridades',
+  path: '/prioridades',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanejamentoRoute = PlanejamentoRouteImport.update({
+  id: '/planejamento',
+  path: '/planejamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrociniosRoute = PatrociniosRouteImport.update({
@@ -67,6 +90,11 @@ const ParceirosRoute = ParceirosRouteImport.update({
   path: '/parceiros',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificacoesRoute = NotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MinhaContaRoute = MinhaContaRouteImport.update({
   id: '/minha-conta',
   path: '/minha-conta',
@@ -80,6 +108,11 @@ const MidiaOfflineRoute = MidiaOfflineRouteImport.update({
 const KanbanRoute = KanbanRouteImport.update({
   id: '/kanban',
   path: '/kanban',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndicadoresRoute = IndicadoresRouteImport.update({
+  id: '/indicadores',
+  path: '/indicadores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -122,6 +155,11 @@ const ComprasRoute = ComprasRouteImport.update({
   path: '/compras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CentralIaRoute = CentralIaRouteImport.update({
+  id: '/central-ia',
+  path: '/central-ia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CampanhasIdRoute = CampanhasIdRouteImport.update({
   id: '/campanhas_/$id',
   path: '/campanhas/$id',
@@ -147,6 +185,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
   id: '/admin/usuarios',
   path: '/admin/usuarios',
@@ -155,6 +198,11 @@ const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
 const AdminLixeiraRoute = AdminLixeiraRouteImport.update({
   id: '/admin/lixeira',
   path: '/admin/lixeira',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminImportarRoute = AdminImportarRouteImport.update({
+  id: '/admin/importar',
+  path: '/admin/importar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminHistoricoRoute = AdminHistoricoRouteImport.update({
@@ -178,13 +226,16 @@ export interface FileRoutesByFullPath {
   '/admin/cargos': typeof AdminCargosRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/historico': typeof AdminHistoricoRoute
+  '/admin/importar': typeof AdminImportarRoute
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
+  '/central-ia': typeof CentralIaRoute
   '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
@@ -192,28 +243,36 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof EventosRoute
   '/eventos/$id': typeof EventosIdRoute
   '/financeiro': typeof FinanceiroRoute
+  '/indicadores': typeof IndicadoresRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/notificacoes': typeof NotificacoesRoute
   '/parceiros': typeof ParceirosRoute
   '/parceiros/$id': typeof ParceirosIdRoute
   '/patrocinios': typeof PatrociniosRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/prioridades': typeof PrioridadesRoute
   '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/workflows': typeof WorkflowsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/cargos': typeof AdminCargosRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/historico': typeof AdminHistoricoRoute
+  '/admin/importar': typeof AdminImportarRoute
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
+  '/central-ia': typeof CentralIaRoute
   '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
@@ -221,15 +280,20 @@ export interface FileRoutesByTo {
   '/eventos': typeof EventosRoute
   '/eventos/$id': typeof EventosIdRoute
   '/financeiro': typeof FinanceiroRoute
+  '/indicadores': typeof IndicadoresRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/notificacoes': typeof NotificacoesRoute
   '/parceiros': typeof ParceirosRoute
   '/parceiros/$id': typeof ParceirosIdRoute
   '/patrocinios': typeof PatrociniosRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/prioridades': typeof PrioridadesRoute
   '/projetos': typeof ProjetosRoute
   '/projetos/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/workflows': typeof WorkflowsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -237,13 +301,16 @@ export interface FileRoutesById {
   '/admin/cargos': typeof AdminCargosRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/historico': typeof AdminHistoricoRoute
+  '/admin/importar': typeof AdminImportarRoute
   '/admin/lixeira': typeof AdminLixeiraRoute
   '/admin/usuarios': typeof AdminUsuariosRoute
+  '/analytics': typeof AnalyticsRoute
   '/auth': typeof AuthRoute
   '/brindes': typeof BrindesRoute
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas_/$id': typeof CampanhasIdRoute
+  '/central-ia': typeof CentralIaRoute
   '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
@@ -251,15 +318,20 @@ export interface FileRoutesById {
   '/eventos': typeof EventosRoute
   '/eventos_/$id': typeof EventosIdRoute
   '/financeiro': typeof FinanceiroRoute
+  '/indicadores': typeof IndicadoresRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
+  '/notificacoes': typeof NotificacoesRoute
   '/parceiros': typeof ParceirosRoute
   '/parceiros_/$id': typeof ParceirosIdRoute
   '/patrocinios': typeof PatrociniosRoute
+  '/planejamento': typeof PlanejamentoRoute
+  '/prioridades': typeof PrioridadesRoute
   '/projetos': typeof ProjetosRoute
   '/projetos_/$id': typeof ProjetosIdRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/workflows': typeof WorkflowsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -268,13 +340,16 @@ export interface FileRouteTypes {
     | '/admin/cargos'
     | '/admin/configuracoes'
     | '/admin/historico'
+    | '/admin/importar'
     | '/admin/lixeira'
     | '/admin/usuarios'
+    | '/analytics'
     | '/auth'
     | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
+    | '/central-ia'
     | '/compras'
     | '/conteudos'
     | '/contratos'
@@ -282,28 +357,36 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/eventos/$id'
     | '/financeiro'
+    | '/indicadores'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
+    | '/notificacoes'
     | '/parceiros'
     | '/parceiros/$id'
     | '/patrocinios'
+    | '/planejamento'
+    | '/prioridades'
     | '/projetos'
     | '/projetos/$id'
     | '/redefinir-senha'
+    | '/workflows'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin/cargos'
     | '/admin/configuracoes'
     | '/admin/historico'
+    | '/admin/importar'
     | '/admin/lixeira'
     | '/admin/usuarios'
+    | '/analytics'
     | '/auth'
     | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
+    | '/central-ia'
     | '/compras'
     | '/conteudos'
     | '/contratos'
@@ -311,28 +394,36 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/eventos/$id'
     | '/financeiro'
+    | '/indicadores'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
+    | '/notificacoes'
     | '/parceiros'
     | '/parceiros/$id'
     | '/patrocinios'
+    | '/planejamento'
+    | '/prioridades'
     | '/projetos'
     | '/projetos/$id'
     | '/redefinir-senha'
+    | '/workflows'
   id:
     | '__root__'
     | '/'
     | '/admin/cargos'
     | '/admin/configuracoes'
     | '/admin/historico'
+    | '/admin/importar'
     | '/admin/lixeira'
     | '/admin/usuarios'
+    | '/analytics'
     | '/auth'
     | '/brindes'
     | '/calendario'
     | '/campanhas'
     | '/campanhas_/$id'
+    | '/central-ia'
     | '/compras'
     | '/conteudos'
     | '/contratos'
@@ -340,15 +431,20 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/eventos_/$id'
     | '/financeiro'
+    | '/indicadores'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
+    | '/notificacoes'
     | '/parceiros'
     | '/parceiros_/$id'
     | '/patrocinios'
+    | '/planejamento'
+    | '/prioridades'
     | '/projetos'
     | '/projetos_/$id'
     | '/redefinir-senha'
+    | '/workflows'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -356,13 +452,16 @@ export interface RootRouteChildren {
   AdminCargosRoute: typeof AdminCargosRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
+  AdminImportarRoute: typeof AdminImportarRoute
   AdminLixeiraRoute: typeof AdminLixeiraRoute
   AdminUsuariosRoute: typeof AdminUsuariosRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   AuthRoute: typeof AuthRoute
   BrindesRoute: typeof BrindesRoute
   CalendarioRoute: typeof CalendarioRoute
   CampanhasRoute: typeof CampanhasRoute
   CampanhasIdRoute: typeof CampanhasIdRoute
+  CentralIaRoute: typeof CentralIaRoute
   ComprasRoute: typeof ComprasRoute
   ConteudosRoute: typeof ConteudosRoute
   ContratosRoute: typeof ContratosRoute
@@ -370,19 +469,31 @@ export interface RootRouteChildren {
   EventosRoute: typeof EventosRoute
   EventosIdRoute: typeof EventosIdRoute
   FinanceiroRoute: typeof FinanceiroRoute
+  IndicadoresRoute: typeof IndicadoresRoute
   KanbanRoute: typeof KanbanRoute
   MidiaOfflineRoute: typeof MidiaOfflineRoute
   MinhaContaRoute: typeof MinhaContaRoute
+  NotificacoesRoute: typeof NotificacoesRoute
   ParceirosRoute: typeof ParceirosRoute
   ParceirosIdRoute: typeof ParceirosIdRoute
   PatrociniosRoute: typeof PatrociniosRoute
+  PlanejamentoRoute: typeof PlanejamentoRoute
+  PrioridadesRoute: typeof PrioridadesRoute
   ProjetosRoute: typeof ProjetosRoute
   ProjetosIdRoute: typeof ProjetosIdRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
+  WorkflowsRoute: typeof WorkflowsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/workflows': {
+      id: '/workflows'
+      path: '/workflows'
+      fullPath: '/workflows'
+      preLoaderRoute: typeof WorkflowsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/redefinir-senha': {
       id: '/redefinir-senha'
       path: '/redefinir-senha'
@@ -402,6 +513,20 @@ declare module '@tanstack/react-router' {
       path: '/projetos'
       fullPath: '/projetos'
       preLoaderRoute: typeof ProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prioridades': {
+      id: '/prioridades'
+      path: '/prioridades'
+      fullPath: '/prioridades'
+      preLoaderRoute: typeof PrioridadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planejamento': {
+      id: '/planejamento'
+      path: '/planejamento'
+      fullPath: '/planejamento'
+      preLoaderRoute: typeof PlanejamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinios': {
@@ -425,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParceirosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notificacoes': {
+      id: '/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/notificacoes'
+      preLoaderRoute: typeof NotificacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/minha-conta': {
       id: '/minha-conta'
       path: '/minha-conta'
@@ -444,6 +576,13 @@ declare module '@tanstack/react-router' {
       path: '/kanban'
       fullPath: '/kanban'
       preLoaderRoute: typeof KanbanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/indicadores': {
+      id: '/indicadores'
+      path: '/indicadores'
+      fullPath: '/indicadores'
+      preLoaderRoute: typeof IndicadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -502,6 +641,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComprasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/central-ia': {
+      id: '/central-ia'
+      path: '/central-ia'
+      fullPath: '/central-ia'
+      preLoaderRoute: typeof CentralIaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/campanhas_/$id': {
       id: '/campanhas_/$id'
       path: '/campanhas/$id'
@@ -537,6 +683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/usuarios': {
       id: '/admin/usuarios'
       path: '/admin/usuarios'
@@ -549,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/lixeira'
       fullPath: '/admin/lixeira'
       preLoaderRoute: typeof AdminLixeiraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/importar': {
+      id: '/admin/importar'
+      path: '/admin/importar'
+      fullPath: '/admin/importar'
+      preLoaderRoute: typeof AdminImportarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/historico': {
@@ -580,13 +740,16 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCargosRoute: AdminCargosRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
+  AdminImportarRoute: AdminImportarRoute,
   AdminLixeiraRoute: AdminLixeiraRoute,
   AdminUsuariosRoute: AdminUsuariosRoute,
+  AnalyticsRoute: AnalyticsRoute,
   AuthRoute: AuthRoute,
   BrindesRoute: BrindesRoute,
   CalendarioRoute: CalendarioRoute,
   CampanhasRoute: CampanhasRoute,
   CampanhasIdRoute: CampanhasIdRoute,
+  CentralIaRoute: CentralIaRoute,
   ComprasRoute: ComprasRoute,
   ConteudosRoute: ConteudosRoute,
   ContratosRoute: ContratosRoute,
@@ -594,15 +757,20 @@ const rootRouteChildren: RootRouteChildren = {
   EventosRoute: EventosRoute,
   EventosIdRoute: EventosIdRoute,
   FinanceiroRoute: FinanceiroRoute,
+  IndicadoresRoute: IndicadoresRoute,
   KanbanRoute: KanbanRoute,
   MidiaOfflineRoute: MidiaOfflineRoute,
   MinhaContaRoute: MinhaContaRoute,
+  NotificacoesRoute: NotificacoesRoute,
   ParceirosRoute: ParceirosRoute,
   ParceirosIdRoute: ParceirosIdRoute,
   PatrociniosRoute: PatrociniosRoute,
+  PlanejamentoRoute: PlanejamentoRoute,
+  PrioridadesRoute: PrioridadesRoute,
   ProjetosRoute: ProjetosRoute,
   ProjetosIdRoute: ProjetosIdRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
+  WorkflowsRoute: WorkflowsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

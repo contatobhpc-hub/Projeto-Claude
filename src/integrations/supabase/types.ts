@@ -127,6 +127,7 @@ export type CampaignRow = Stamped &
     owner_id: string | null;
     products: string[];
     budget: number;
+    objective_id: string | null;
   };
 
 export type ProjectRow = Stamped &
@@ -416,6 +417,46 @@ export type ExpenseRow = Stamped & {
 
 export type BudgetOverviewRow = { category: string; cost_center_id: string | null; planned: number; approved: number; committed: number; spent: number };
 
+
+// ---------------------------------------------------------------- Fase 5 — Inteligência
+export type NotificationRow = {
+  id: string; user_id: string; kind: string; title: string; body: string; link: string; module: string | null;
+  record_id: string | null; dedupe_key: string | null; read_at: string | null; created_at: string;
+};
+
+export type ObjectiveRow = Stamped &
+  Approvable & {
+    id: string; year: number; title: string; description: string; perspective: string; status: string; owner_id: string | null;
+  };
+
+export type KeyResultRow = {
+  id: string; objective_id: string; title: string; unit: string; baseline: number; target: number; current: number;
+  indicator_id: string | null; owner_id: string | null; due_date: string | null; created_at: string; updated_at: string;
+};
+
+export type IndicatorRow = Stamped & {
+  id: string; name: string; description: string; unit: string; direction: "up" | "down"; frequency: string;
+  target: number | null; owner_id: string | null;
+};
+
+export type IndicatorValueRow = { id: string; indicator_id: string; period: string; value: number; note: string; created_by: string | null; created_at: string };
+
+export type WorkflowAction =
+  | { type: "create_task"; title: string; assignee_id?: string; due_in_days?: number; priority?: string }
+  | { type: "notify"; target: string; message: string }
+  | { type: "add_checklist"; items: string[] };
+
+export type WorkflowRuleRow = Stamped & {
+  id: string; name: string; description: string; active: boolean; trigger: string; condition_field: string;
+  condition_value: string; actions: WorkflowAction[];
+};
+
+export type WorkflowRunRow = { id: number; rule_id: string | null; trigger: string; record_id: string | null; status: "ok" | "erro"; log: string; created_at: string };
+
+export type AiConversationRow = { id: string; user_id: string; title: string; campaign_id: string | null; project_id: string | null; created_at: string; updated_at: string };
+export type AiMessageRow = { id: string; conversation_id: string; role: "user" | "assistant"; content: string; tokens_in: number | null; tokens_out: number | null; created_at: string };
+export type AiPromptRow = { id: string; title: string; category: string; prompt: string; created_by: string | null; created_at: string };
+
 export type Database = {
   public: {
     Tables: {
@@ -458,6 +499,16 @@ export type Database = {
       invoices: Table<InvoiceRow, Partial<InvoiceRow> & Pick<InvoiceRow, "number" | "value">>;
       payments: Table<PaymentRow, Partial<PaymentRow> & Pick<PaymentRow, "description" | "value" | "due_date">>;
       expenses: Table<ExpenseRow, Partial<Omit<ExpenseRow, "total">> & Pick<ExpenseRow, "description" | "unit_value">>;
+      notifications: Table<NotificationRow>;
+      strategic_objectives: Table<ObjectiveRow, Partial<ObjectiveRow> & Pick<ObjectiveRow, "year" | "title">>;
+      key_results: Table<KeyResultRow, Partial<KeyResultRow> & Pick<KeyResultRow, "objective_id" | "title" | "target">>;
+      indicators: Table<IndicatorRow, Partial<IndicatorRow> & Pick<IndicatorRow, "name">>;
+      indicator_values: Table<IndicatorValueRow, Partial<IndicatorValueRow> & Pick<IndicatorValueRow, "indicator_id" | "period" | "value">>;
+      workflow_rules: Table<WorkflowRuleRow, Partial<WorkflowRuleRow> & Pick<WorkflowRuleRow, "name" | "trigger">>;
+      workflow_runs: Table<WorkflowRunRow>;
+      ai_conversations: Table<AiConversationRow, Partial<AiConversationRow>>;
+      ai_messages: Table<AiMessageRow, Partial<AiMessageRow> & Pick<AiMessageRow, "conversation_id" | "role" | "content">>;
+      ai_prompts: Table<AiPromptRow, Partial<AiPromptRow> & Pick<AiPromptRow, "title" | "prompt">>;
       inventory_movements: Table<InventoryMovementRow, Partial<InventoryMovementRow> & Pick<InventoryMovementRow, "item_id" | "type" | "quantity">>;
     };
     Views: { [_ in never]: never };
@@ -476,6 +527,9 @@ export type Database = {
       decide_invoice: { Args: { _id: string; _approve: boolean }; Returns: undefined };
       approve_budget_line: { Args: { _id: string; _amount: number }; Returns: undefined };
       budget_overview: { Args: { _year: number }; Returns: BudgetOverviewRow[] };
+      generate_due_notifications: { Args: Record<string, never>; Returns: number };
+      ai_usage_this_month: { Args: { _user?: string }; Returns: number };
+      import_rows: { Args: { _table: string; _rows: Json }; Returns: number };
     };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };

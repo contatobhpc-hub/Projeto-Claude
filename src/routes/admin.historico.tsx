@@ -57,6 +57,11 @@ const TABLE_LABELS: Record<string, string> = {
   invoices: "Notas fiscais",
   payments: "Pagamentos",
   expenses: "Despesas",
+  strategic_objectives: "Objetivos estratégicos",
+  key_results: "Resultados-chave",
+  indicators: "Indicadores",
+  indicator_values: "Valores de indicadores",
+  workflow_rules: "Workflows",
 };
 
 const ACTION_LABELS: Record<AuditLogRow["action"], { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {

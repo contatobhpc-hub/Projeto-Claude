@@ -14,6 +14,8 @@ import { insertRow, orNull, updateRow } from "@/lib/data";
 import { errorMessage } from "@/lib/errors";
 import { CAMPAIGN_OBJECTIVES, CAMPAIGN_STATUSES, CAMPAIGN_TYPES, PRIORITIES } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
+import { useObjectives } from "@/lib/inteligencia";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Draft = {
   name: string;
@@ -28,6 +30,7 @@ type Draft = {
   products: string;
   description: string;
   notes: string;
+  objective_id: string | null;
 };
 
 const blank = (c: CampaignRow | null | undefined, me: string | null): Draft => ({
@@ -44,6 +47,7 @@ const blank = (c: CampaignRow | null | undefined, me: string | null): Draft => (
   products: (c?.products ?? []).join(", "),
   description: c?.description ?? "",
   notes: c?.notes ?? "",
+  objective_id: c?.objective_id ?? null,
 });
 
 export function CampaignDialog({ open, onOpenChange, campaign }: { open: boolean; onOpenChange: (o: boolean) => void; campaign?: CampaignRow | null }) {
@@ -86,6 +90,7 @@ export function CampaignDialog({ open, onOpenChange, campaign }: { open: boolean
       products: splitList(d.products),
       description: d.description,
       notes: d.notes,
+      objective_id: d.objective_id,
     };
     try {
       if (isNew) {
@@ -142,6 +147,9 @@ export function CampaignDialog({ open, onOpenChange, campaign }: { open: boolean
             <Field label="Orçamento (R$)">
               <Input inputMode="decimal" value={d.budget} onChange={(e) => set("budget", e.target.value)} placeholder="0" />
             </Field>
+            <Field label="Objetivo estratégico" className="sm:col-span-2" hint="Liga a campanha ao Planejamento Estratégico.">
+              <ObjectiveSelect value={d.objective_id} onChange={(v) => set("objective_id", v)} />
+            </Field>
             <Field label="Produtos relacionados" className="sm:col-span-2" hint="Separe por vírgula.">
               <Input value={d.products} onChange={(e) => set("products", e.target.value)} placeholder="Consórcio, Cartão, Seguro" />
             </Field>
@@ -164,5 +172,26 @@ export function CampaignDialog({ open, onOpenChange, campaign }: { open: boolean
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** Objetivos do ano corrente e do próximo. */
+function ObjectiveSelect({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {
+  const y = new Date().getFullYear();
+  const { data: a = [] } = useObjectives(y);
+  const { data: b = [] } = useObjectives(y + 1);
+  const list = [...a, ...b];
+  return (
+    <Select value={value ?? "__none__"} onValueChange={(v) => onChange(v === "__none__" ? null : v)}>
+      <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="__none__">Sem objetivo</SelectItem>
+        {list.map((o) => (
+          <SelectItem key={o.id} value={o.id}>
+            {o.year} · {o.title}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
