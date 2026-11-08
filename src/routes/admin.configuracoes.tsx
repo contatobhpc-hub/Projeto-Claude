@@ -16,6 +16,7 @@ import { moneyInput, parseMoney } from "@/lib/data";
 import { errorMessage } from "@/lib/errors";
 import { brl } from "@/lib/operacao";
 import { useAppLists, useAppSettings } from "@/lib/relacionamento";
+import { useFinanceSettings } from "@/lib/financeiro";
 
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — Marketing Hub" }] }),
@@ -35,6 +36,7 @@ function SettingsPage() {
   const qc = useQueryClient();
   const { data, isLoading } = useAppSettings();
   const lists = useAppLists();
+  const finSettings = useFinanceSettings();
 
   const [orgName, setOrgName] = useState("");
   const [area, setArea] = useState("");
@@ -43,6 +45,9 @@ function SettingsPage() {
   const [contractCats, setContractCats] = useState("");
   const [mediaCats, setMediaCats] = useState("");
   const [budgets, setBudgets] = useState<{ year: string; amount: string }[]>([]);
+  const [limit, setLimit] = useState("");
+  const [budgetCats, setBudgetCats] = useState("");
+  const [expenseCats, setExpenseCats] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -56,6 +61,10 @@ function SettingsPage() {
     setPartnerCats(lists.partner_categories.join("\n"));
     setContractCats(lists.contract_categories.join("\n"));
     setMediaCats(lists.media_categories.join("\n"));
+    const fin = finSettings;
+    setLimit(moneyInput(fin.purchase_approval_limit));
+    setBudgetCats(fin.budget_categories.join("\n"));
+    setExpenseCats(fin.expense_categories.join("\n"));
     setBudgets(
       Object.entries(sb)
         .sort(([a], [b]) => b.localeCompare(a))
@@ -83,7 +92,10 @@ function SettingsPage() {
       budgetMap[b.year.trim()] = amount;
     }
     const pc = lines(partnerCats), cc = lines(contractCats), mc = lines(mediaCats);
-    if (!pc.length || !cc.length || !mc.length) return void toast.error("Cada lista de categorias precisa de pelo menos um item.");
+    const bc = lines(budgetCats), ec = lines(expenseCats);
+    if (!pc.length || !cc.length || !mc.length || !bc.length || !ec.length) return void toast.error("Cada lista de categorias precisa de pelo menos um item.");
+    const lim = parseMoney(limit);
+    if (Number.isNaN(lim) || lim < 0) return void toast.error("Alçada de compras inválida.");
 
     setBusy(true);
     const { error } = await supabase.from("app_settings").upsert([
@@ -91,6 +103,7 @@ function SettingsPage() {
       { key: "signup", value: { allowed_domains: domainList } as unknown as Json },
       { key: "lists", value: { partner_categories: pc, contract_categories: cc, media_categories: mc } as unknown as Json },
       { key: "sponsorship_budget", value: budgetMap as unknown as Json },
+      { key: "finance", value: { purchase_approval_limit: lim, budget_categories: bc, expense_categories: ec } as unknown as Json },
     ]);
     setBusy(false);
     if (error) return void toast.error(errorMessage(error));
@@ -169,6 +182,29 @@ function SettingsPage() {
             <Button type="button" size="sm" variant="outline" onClick={() => setBudgets([{ year: String(new Date().getFullYear() + 1), amount: "" }, ...budgets])}>
               <Plus className="h-4 w-4" /> Adicionar ano
             </Button>
+          </div>
+        </section>
+
+        <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
+          <div>
+            <h2 className="font-display text-base font-semibold">Financeiro</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Compras até a alçada precisam de uma aprovação (Gestor ou Diretoria). Acima dela, a Diretoria também aprova.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="lim">Alçada de compras (R$)</Label>
+            <Input id="lim" className="w-48" inputMode="decimal" value={limit} onChange={(e) => setLimit(e.target.value)} disabled={isLoading} />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="bc">Categorias do orçamento</Label>
+              <Textarea id="bc" rows={10} value={budgetCats} onChange={(e) => setBudgetCats(e.target.value)} disabled={isLoading} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ec">Categorias de despesa</Label>
+              <Textarea id="ec" rows={10} value={expenseCats} onChange={(e) => setExpenseCats(e.target.value)} disabled={isLoading} />
+            </div>
           </div>
         </section>
 

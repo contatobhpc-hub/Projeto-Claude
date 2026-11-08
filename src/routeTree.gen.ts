@@ -19,11 +19,13 @@ import { Route as MinhaContaRouteImport } from './routes/minha-conta'
 import { Route as MidiaOfflineRouteImport } from './routes/midia-offline'
 import { Route as KanbanRouteImport } from './routes/kanban'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FinanceiroRouteImport } from './routes/financeiro'
 import { Route as EventosIdRouteImport } from './routes/eventos_.$id'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as ContratosIdRouteImport } from './routes/contratos_.$id'
 import { Route as ContratosRouteImport } from './routes/contratos'
 import { Route as ConteudosRouteImport } from './routes/conteudos'
+import { Route as ComprasRouteImport } from './routes/compras'
 import { Route as CampanhasIdRouteImport } from './routes/campanhas_.$id'
 import { Route as CampanhasRouteImport } from './routes/campanhas'
 import { Route as CalendarioRouteImport } from './routes/calendario'
@@ -85,6 +87,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FinanceiroRoute = FinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventosIdRoute = EventosIdRouteImport.update({
   id: '/eventos_/$id',
   path: '/eventos/$id',
@@ -108,6 +115,11 @@ const ContratosRoute = ContratosRouteImport.update({
 const ConteudosRoute = ConteudosRouteImport.update({
   id: '/conteudos',
   path: '/conteudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComprasRoute = ComprasRouteImport.update({
+  id: '/compras',
+  path: '/compras',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CampanhasIdRoute = CampanhasIdRouteImport.update({
@@ -173,11 +185,13 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
+  '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
   '/contratos/$id': typeof ContratosIdRoute
   '/eventos': typeof EventosRoute
   '/eventos/$id': typeof EventosIdRoute
+  '/financeiro': typeof FinanceiroRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
@@ -200,11 +214,13 @@ export interface FileRoutesByTo {
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas/$id': typeof CampanhasIdRoute
+  '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
   '/contratos/$id': typeof ContratosIdRoute
   '/eventos': typeof EventosRoute
   '/eventos/$id': typeof EventosIdRoute
+  '/financeiro': typeof FinanceiroRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
@@ -228,11 +244,13 @@ export interface FileRoutesById {
   '/calendario': typeof CalendarioRoute
   '/campanhas': typeof CampanhasRoute
   '/campanhas_/$id': typeof CampanhasIdRoute
+  '/compras': typeof ComprasRoute
   '/conteudos': typeof ConteudosRoute
   '/contratos': typeof ContratosRoute
   '/contratos_/$id': typeof ContratosIdRoute
   '/eventos': typeof EventosRoute
   '/eventos_/$id': typeof EventosIdRoute
+  '/financeiro': typeof FinanceiroRoute
   '/kanban': typeof KanbanRoute
   '/midia-offline': typeof MidiaOfflineRoute
   '/minha-conta': typeof MinhaContaRoute
@@ -257,11 +275,13 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
+    | '/compras'
     | '/conteudos'
     | '/contratos'
     | '/contratos/$id'
     | '/eventos'
     | '/eventos/$id'
+    | '/financeiro'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
@@ -284,11 +304,13 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/campanhas'
     | '/campanhas/$id'
+    | '/compras'
     | '/conteudos'
     | '/contratos'
     | '/contratos/$id'
     | '/eventos'
     | '/eventos/$id'
+    | '/financeiro'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
@@ -311,11 +333,13 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/campanhas'
     | '/campanhas_/$id'
+    | '/compras'
     | '/conteudos'
     | '/contratos'
     | '/contratos_/$id'
     | '/eventos'
     | '/eventos_/$id'
+    | '/financeiro'
     | '/kanban'
     | '/midia-offline'
     | '/minha-conta'
@@ -339,11 +363,13 @@ export interface RootRouteChildren {
   CalendarioRoute: typeof CalendarioRoute
   CampanhasRoute: typeof CampanhasRoute
   CampanhasIdRoute: typeof CampanhasIdRoute
+  ComprasRoute: typeof ComprasRoute
   ConteudosRoute: typeof ConteudosRoute
   ContratosRoute: typeof ContratosRoute
   ContratosIdRoute: typeof ContratosIdRoute
   EventosRoute: typeof EventosRoute
   EventosIdRoute: typeof EventosIdRoute
+  FinanceiroRoute: typeof FinanceiroRoute
   KanbanRoute: typeof KanbanRoute
   MidiaOfflineRoute: typeof MidiaOfflineRoute
   MinhaContaRoute: typeof MinhaContaRoute
@@ -427,6 +453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/financeiro': {
+      id: '/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof FinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/eventos_/$id': {
       id: '/eventos_/$id'
       path: '/eventos/$id'
@@ -460,6 +493,13 @@ declare module '@tanstack/react-router' {
       path: '/conteudos'
       fullPath: '/conteudos'
       preLoaderRoute: typeof ConteudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compras': {
+      id: '/compras'
+      path: '/compras'
+      fullPath: '/compras'
+      preLoaderRoute: typeof ComprasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/campanhas_/$id': {
@@ -547,11 +587,13 @@ const rootRouteChildren: RootRouteChildren = {
   CalendarioRoute: CalendarioRoute,
   CampanhasRoute: CampanhasRoute,
   CampanhasIdRoute: CampanhasIdRoute,
+  ComprasRoute: ComprasRoute,
   ConteudosRoute: ConteudosRoute,
   ContratosRoute: ContratosRoute,
   ContratosIdRoute: ContratosIdRoute,
   EventosRoute: EventosRoute,
   EventosIdRoute: EventosIdRoute,
+  FinanceiroRoute: FinanceiroRoute,
   KanbanRoute: KanbanRoute,
   MidiaOfflineRoute: MidiaOfflineRoute,
   MinhaContaRoute: MinhaContaRoute,

@@ -60,11 +60,34 @@ Regras no banco (`supabase/migrations/20261107000002_relacionamento.sql`):
 
 Carga opcional: `supabase/seed/patrocinios_2026.sql` traz os 51 patrocínios da planilha "Controle de Patrocínios" (R$ 65.370,61; verba de R$ 250.000 já configurada).
 
+## Fase 4 — Financeiro
+
+Fluxo encadeado: **Solicitação de compra → aprovação → nota fiscal → aprovação da nota → pagamento agendado → pago → despesa realizada** (lançada automaticamente). Fornecedores são os Parceiros.
+
+| Tela | O que faz |
+| --- | --- |
+| Financeiro › Visão geral | Aprovado × comprometido × realizado × disponível do ano, barras por categoria e alertas (≥ 80% do orçamento, gasto sem orçamento, pagamentos atrasados ou vencendo, notas a aprovar) |
+| Financeiro › Orçamento | Linhas por categoria (e centro de custo): proposto pela equipe, aprovado só por aprovadores, saldo |
+| Financeiro › Notas fiscais | Lançamento com PDF/XML, aprovação que já agenda o pagamento, exportação para Excel |
+| Financeiro › Pagamentos | A pagar, atrasados e pagos; registrar pagamento lança a despesa; estorno só por aprovadores |
+| Financeiro › Despesas | Realizado do ano (automático e manual), exportação para Excel |
+| Financeiro › Fornecedores e Centros de custo | Total pago e em aberto por fornecedor, avaliação; cadastro de centros de custo |
+| Solicitações de compra | Pedido, alçada, aprovações com parecer, compra, recebimento, nota e conclusão |
+| Campanhas e Eventos | Passam a mostrar o gasto realizado ao lado do orçamento |
+
+Controles no banco (`supabase/migrations/20261107000003_financeiro.sql`):
+
+- **Alçada:** até o limite (Configurações, padrão R$ 5.000) uma aprovação basta; acima, Gestor e depois Diretoria.
+- **Segregação de funções:** quem pede não aprova o próprio pedido; ninguém decide duas vezes o mesmo pedido.
+- **Imutabilidade:** pedido enviado não muda de valor; nota aprovada não muda valor/fornecedor/número; nota paga não é cancelada.
+- **Orçamento:** o valor aprovado só muda por quem tem "Aprovar" no Financeiro.
+- **Notas duplicadas** (mesmo número e fornecedor) são recusadas.
+
 ## Como colocar no ar
 
 1. **Supabase novo:** em supabase.com, crie o projeto. Em *SQL Editor*, rode os
    arquivos de `supabase/migrations/` **em ordem** (primeiro `20261106000001_fundacao.sql`,
-   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`).
+   depois `20261107000001_operacao.sql`, depois `20261107000002_relacionamento.sql`, depois `20261107000003_financeiro.sql`).
    Se quiser os patrocínios de 2026, rode também `supabase/seed/patrocinios_2026.sql`.
    (Ou, com a CLI: `npx supabase link --project-ref <id>` e `npx supabase db push`.)
 2. **Autenticação:** em *Authentication → URL Configuration*, coloque o endereço
@@ -103,9 +126,9 @@ excluir, grave `deleted_at = now()` (o banco confere a permissão de exclusão).
 ## Testes do banco
 
 `supabase/tests/run.sh` cria um banco descartável, aplica as migrações e roda
-os cenários de permissão (63 casos: autopromoção, colaborador editando tarefa de
+os cenários de permissão (83 casos: autopromoção, colaborador editando tarefa de
 outro, analista excluindo, último administrador, domínio de cadastro, aprovações
-de campanha, conteúdo e contrato, estoque, convidados de evento etc.).
+de campanha, conteúdo e contrato, estoque, convidados de evento, alçada e segregação de compras, fluxo nota → pagamento → despesa etc.).
 Rode-o sempre que mudar uma migração.
 
 ## Diferenças em relação ao app antigo

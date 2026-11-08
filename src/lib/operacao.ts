@@ -73,6 +73,9 @@ const TONES: Record<string, string> = {
   Prospect: TONE.gray, Negociação: TONE.amber, Ativo: TONE.green, Renovação: TONE.orange, Inativo: TONE.gray,
   "Em análise": TONE.amber, Assinado: TONE.blue, Vigente: TONE.green, Encerrado: TONE.gray,
   "Em produção": TONE.violet, Confirmado: TONE.blue, "Em negociação": TONE.amber, "Em execução": TONE.blue,
+  // Fase 4: financeiro
+  Pendente: TONE.amber, Paga: TONE.green, Comprado: TONE.blue, Recebido: TONE.teal, Recusado: TONE.red, Agendado: TONE.blue,
+  Urgente: TONE.red,
   "Arte em produção": TONE.violet, "Aguardando instalação": TONE.amber, Instalado: TONE.green, Retirado: TONE.gray,
   // categorias do calendário
   Campanha: TONE.indigo, Evento: TONE.pink, Publicação: TONE.blue, Reunião: TONE.violet, Entrega: TONE.green,

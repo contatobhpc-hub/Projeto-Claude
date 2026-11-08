@@ -15,6 +15,7 @@ import { RecordAttachments } from "@/components/record-attachments";
 import { RecordComments } from "@/components/record-comments";
 import { brl, fmtDate, useCampaigns, useChecklist, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
+import { useExpenses } from "@/lib/financeiro";
 import { EVENT_CHECKLIST_GROUPS, daysUntil, useMktEvent, usePartners, useSponsorships } from "@/lib/relacionamento";
 import { profileName, useProfiles } from "@/lib/team";
 
@@ -38,6 +39,7 @@ function EventPage() {
   const { data: tasks = [] } = useTasks([{ column: "event_id", value: id }]);
   const { data: sponsorships = [] } = useSponsorships([{ column: "event_id", value: id }]);
   const { data: checklist = [] } = useChecklist("eventos", id);
+  const { data: expenses = [] } = useExpenses([{ column: "event_id", value: id }]);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <div className="flex justify-center py-24 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>;
@@ -84,7 +86,11 @@ function EventPage() {
       <div className="mb-6 grid gap-3 sm:grid-cols-4">
         <Stat label="Faltam" value={d === null ? "—" : d < 0 ? "realizado" : d === 0 ? "hoje" : `${d} dias`} />
         <Stat label="Checklist" value={checklist.length ? `${Math.round((done / checklist.length) * 100)}%` : "—"} hint={`${done} de ${checklist.length} itens`} />
-        <Stat label="Orçamento" value={brl(Number(e.budget || 0))} />
+        <Stat
+          label="Orçamento"
+          value={brl(Number(e.budget || 0))}
+          hint={can("fin_orcamento", "view") ? `${brl(expenses.reduce((s, x) => s + Number(x.total), 0))} gastos` : undefined}
+        />
         <Stat label="Tarefas em aberto" value={String(tasks.filter((t) => !["Concluído", "Cancelado"].includes(t.status)).length)} />
       </div>
 

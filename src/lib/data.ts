@@ -25,7 +25,14 @@ export type LiveTable =
   | "sponsorships"
   | "offline_media"
   | "inventory_items"
-  | "inventory_movements";
+  | "inventory_movements"
+  | "cost_centers"
+  | "budget_lines"
+  | "purchase_requests"
+  | "purchase_approvals"
+  | "invoices"
+  | "payments"
+  | "expenses";
 
 /** Mantém as consultas de uma tabela atualizadas quando alguém da equipe altera algo. */
 export function useLiveTable(table: LiveTable) {

@@ -14,6 +14,7 @@ import { CURRENT_PHASE } from "@/lib/navigation";
 import { DOT, fmtDate, isOverdue, todayISO, useCampaigns, useContents, useEvents, useProjects, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
 import { useProfiles } from "@/lib/team";
+import { paymentState, useInvoices, usePayments, usePurchaseRequests } from "@/lib/financeiro";
 import { contractAlert, nextSponsorshipDeadline, removalAlert, stockLevel, useContracts, useInventory, useOfflineMedia, useSponsorships } from "@/lib/relacionamento";
 
 export const Route = createFileRoute("/")({
@@ -49,8 +50,13 @@ function Dashboard() {
   const { data: inventory = [] } = useInventory();
   const { data: media = [] } = useOfflineMedia();
   const { data: sponsorships = [] } = useSponsorships();
+  const { data: purchases = [] } = usePurchaseRequests();
+  const { data: pendingInvoices = [] } = useInvoices([{ column: "status", value: "Pendente" }]);
+  const { data: scheduled = [] } = usePayments([{ column: "status", value: "Agendado" }]);
+  const latePayments = scheduled.filter((p) => paymentState(p) === "Atrasado");
 
-  const alerts: { label: string; n: number; to: "/contratos" | "/brindes" | "/midia-offline" | "/patrocinios"; tone: string }[] = [
+  const alerts: { label: string; n: number; to: "/contratos" | "/brindes" | "/midia-offline" | "/patrocinios" | "/financeiro"; tone: string }[] = [
+    { label: "pagamentos atrasados", n: latePayments.length, to: "/financeiro", tone: "border-red-500/40 bg-red-500/10" },
     {
       label: "contratos vencidos ou vencendo em 30 dias",
       n: contracts.filter((c) => ["expired", "critical", "warning"].includes(contractAlert(c).level)).length,
@@ -81,7 +87,16 @@ function Dashboard() {
   const myLate = myOpen.filter((t) => isOverdue(t.due_date, false)).length;
   const teamLate = tasks.filter((t) => isOverdue(t.due_date, ["Concluído", "Cancelado"].includes(t.status))).length;
 
-  const pending: { label: string; to: "/campanhas" | "/projetos" | "/conteudos" | "/contratos"; n: number }[] = [];
+  const pending: { label: string; to: "/campanhas" | "/projetos" | "/conteudos" | "/contratos" | "/compras" | "/financeiro"; n: number }[] = [];
+  const board = ["diretoria", "admin"].includes(profile?.role?.key ?? "");
+  if (can("fin_compras", "approve")) {
+    pending.push({
+      label: "Solicitações de compra aguardando aprovação",
+      to: "/compras",
+      n: purchases.filter((p) => p.requester_id !== profile?.id && (p.status === "Solicitado" || (p.status === "Em aprovação" && board))).length,
+    });
+  }
+  if (can("fin_orcamento", "approve")) pending.push({ label: "Notas fiscais aguardando aprovação", to: "/financeiro", n: pendingInvoices.length });
   if (can("campanhas", "approve")) pending.push({ label: "Campanhas aguardando aprovação", to: "/campanhas", n: campaigns.filter((c) => c.approval_status === "Aguardando").length });
   if (can("projetos", "approve")) pending.push({ label: "Projetos aguardando aprovação", to: "/projetos", n: projects.filter((p) => p.approval_status === "Aguardando").length });
   if (can("contratos", "approve")) pending.push({ label: "Contratos aguardando aprovação", to: "/contratos", n: contracts.filter((c) => c.approval_status === "Aguardando").length });

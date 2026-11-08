@@ -245,6 +245,7 @@ export type PartnerRow = Stamped & {
   expected_return: number;
   delivered_return: number;
   notes: string;
+  rating: number | null;
 };
 
 export type ContractRow = Stamped &
@@ -371,6 +372,50 @@ export type InventoryMovementRow = {
   created_at: string;
 };
 
+
+// ---------------------------------------------------------------- Fase 4 — Financeiro
+export type CostCenterRow = Stamped & { id: string; code: string; name: string; responsible_id: string | null; active: boolean };
+
+export type BudgetLineRow = Stamped & {
+  id: string; year: number; category: string; cost_center_id: string | null; planned: number; approved: number;
+  approved_by: string | null; approved_at: string | null; notes: string;
+};
+
+export type PurchaseStatus = "Rascunho" | "Solicitado" | "Em aprovação" | "Aprovado" | "Comprado" | "Recebido" | "Concluído" | "Recusado" | "Cancelado";
+
+export type PurchaseRequestRow = Stamped & {
+  id: string; code: string; description: string; justification: string; requester_id: string | null; partner_id: string | null;
+  cost_center_id: string | null; budget_category: string; campaign_id: string | null; project_id: string | null; event_id: string | null;
+  estimated_value: number; final_value: number | null; urgency: string; needed_by: string | null; status: PurchaseStatus;
+  decision_note: string; submitted_at: string | null; decided_at: string | null;
+};
+
+export type PurchaseApprovalRow = {
+  id: string; request_id: string; level: "Gestor" | "Diretoria"; decision: "Aprovado" | "Recusado"; note: string;
+  decided_by: string | null; decided_at: string;
+};
+
+export type InvoiceRow = Stamped & {
+  id: string; number: string; partner_id: string | null; supplier_name: string; issue_date: string; due_date: string | null;
+  value: number; expense_category: string; budget_category: string; cost_center_id: string | null; campaign_id: string | null;
+  project_id: string | null; event_id: string | null; purchase_request_id: string | null; payment_method: string;
+  status: "Pendente" | "Aprovada" | "Paga" | "Cancelada"; approved_by: string | null; approved_at: string | null; notes: string;
+};
+
+export type PaymentRow = Stamped & {
+  id: string; description: string; invoice_id: string | null; partner_id: string | null; value: number; due_date: string;
+  paid_at: string | null; method: string; status: "Agendado" | "Pago" | "Cancelado"; paid_by: string | null; notes: string;
+};
+
+export type ExpenseRow = Stamped & {
+  id: string; description: string; expense_category: string; budget_category: string; cost_center_id: string | null;
+  partner_id: string | null; campaign_id: string | null; project_id: string | null; event_id: string | null; invoice_id: string | null;
+  payment_id: string | null; quantity: number; unit_value: number; total: number; expense_date: string; payment_method: string;
+  owner_id: string | null; notes: string;
+};
+
+export type BudgetOverviewRow = { category: string; cost_center_id: string | null; planned: number; approved: number; committed: number; spent: number };
+
 export type Database = {
   public: {
     Tables: {
@@ -406,6 +451,13 @@ export type Database = {
       sponsorships: Table<SponsorshipRow, Partial<SponsorshipRow> & Pick<SponsorshipRow, "event_name">>;
       offline_media: Table<OfflineMediaRow, Partial<OfflineMediaRow> & Pick<OfflineMediaRow, "title">>;
       inventory_items: Table<InventoryItemRow, Partial<InventoryItemRow> & Pick<InventoryItemRow, "name">>;
+      cost_centers: Table<CostCenterRow, Partial<CostCenterRow> & Pick<CostCenterRow, "code" | "name">>;
+      budget_lines: Table<BudgetLineRow, Partial<BudgetLineRow> & Pick<BudgetLineRow, "year" | "category">>;
+      purchase_requests: Table<PurchaseRequestRow, Partial<PurchaseRequestRow> & Pick<PurchaseRequestRow, "description">>;
+      purchase_approvals: Table<PurchaseApprovalRow>;
+      invoices: Table<InvoiceRow, Partial<InvoiceRow> & Pick<InvoiceRow, "number" | "value">>;
+      payments: Table<PaymentRow, Partial<PaymentRow> & Pick<PaymentRow, "description" | "value" | "due_date">>;
+      expenses: Table<ExpenseRow, Partial<Omit<ExpenseRow, "total">> & Pick<ExpenseRow, "description" | "unit_value">>;
       inventory_movements: Table<InventoryMovementRow, Partial<InventoryMovementRow> & Pick<InventoryMovementRow, "item_id" | "type" | "quantity">>;
     };
     Views: { [_ in never]: never };
@@ -420,6 +472,10 @@ export type Database = {
       purge_expired_trash: { Args: Record<string, never>; Returns: number };
       decide_approval: { Args: { _table: string; _id: string; _decision: string; _note?: string }; Returns: undefined };
       record_history: { Args: { _table: string; _id: string }; Returns: RecordHistoryRow[] };
+      decide_purchase: { Args: { _id: string; _decision: string; _note?: string }; Returns: string };
+      decide_invoice: { Args: { _id: string; _approve: boolean }; Returns: undefined };
+      approve_budget_line: { Args: { _id: string; _amount: number }; Returns: undefined };
+      budget_overview: { Args: { _year: number }; Returns: BudgetOverviewRow[] };
     };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };

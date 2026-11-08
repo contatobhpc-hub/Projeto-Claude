@@ -50,6 +50,13 @@ const TABLE_LABELS: Record<string, string> = {
   inventory_movements: "Movimentações de estoque",
   checklist_items: "Checklists",
   comments: "Comentários",
+  cost_centers: "Centros de custo",
+  budget_lines: "Orçamento",
+  purchase_requests: "Solicitações de compra",
+  purchase_approvals: "Aprovações de compra",
+  invoices: "Notas fiscais",
+  payments: "Pagamentos",
+  expenses: "Despesas",
 };
 
 const ACTION_LABELS: Record<AuditLogRow["action"], { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {

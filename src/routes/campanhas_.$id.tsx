@@ -15,6 +15,7 @@ import { brl, fmtDate, useCampaign, useContents, useEvents, useProjects, useTask
 import { usePermissions } from "@/lib/permissions";
 import { profileName, useProfiles } from "@/lib/team";
 import { useContracts, useMktEvents, useOfflineMedia, useSponsorships } from "@/lib/relacionamento";
+import { useExpenses } from "@/lib/financeiro";
 
 export const Route = createFileRoute("/campanhas_/$id")({
   head: () => ({ meta: [{ title: "Campanha — Marketing Hub" }] }),
@@ -40,6 +41,7 @@ function CampaignPage() {
   const { data: sponsorships = [] } = useSponsorships(filter);
   const { data: media = [] } = useOfflineMedia(filter);
   const { data: contracts = [] } = useContracts(filter);
+  const { data: expenses = [] } = useExpenses(filter);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) {
@@ -121,6 +123,14 @@ function CampaignPage() {
             <Panel title="Sobre" className="lg:col-span-2">
               <InfoRow label="Responsável">{c.owner_id ? profileName(profiles, c.owner_id) : "—"}</InfoRow>
               <InfoRow label="Orçamento">{brl(Number(c.budget || 0))}</InfoRow>
+              {can("fin_orcamento", "view") && (
+                <InfoRow label="Gasto realizado">
+                  {brl(expenses.reduce((s, e) => s + Number(e.total), 0))}
+                  {Number(c.budget) > 0 && (
+                    <span className="text-muted-foreground"> ({Math.round((expenses.reduce((s, e) => s + Number(e.total), 0) / Number(c.budget)) * 100)}% do orçamento)</span>
+                  )}
+                </InfoRow>
+              )}
               <InfoRow label="Produtos">
                 {c.products.length ? (
                   <div className="flex flex-wrap gap-1">
