@@ -98,7 +98,7 @@ function EventsPage() {
             const d = daysUntil(e.event_date);
             return (
               <Link key={e.id} to="/eventos/$id" params={{ id: e.id }} className="flex gap-4 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40">
-                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary-ink">
                   <span className="text-lg font-semibold leading-none tabular-nums">{e.event_date ? e.event_date.slice(8, 10) : "—"}</span>
                   <span className="text-[10px] uppercase">{e.event_date ? fmtDate(e.event_date).slice(3) : "sem data"}</span>
                 </div>

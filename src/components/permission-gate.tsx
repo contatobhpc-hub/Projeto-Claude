@@ -44,7 +44,7 @@ export function NoAccess() {
       <p className="mt-2 text-sm text-muted-foreground">
         Seu cargo não inclui esta tela. Se precisar dela, fale com um Administrador.
       </p>
-      <Link to="/" className="mt-5 inline-block text-sm font-medium text-primary hover:underline">
+      <Link to="/" className="mt-5 inline-block text-sm font-medium text-primary-ink hover:underline">
         Voltar ao início
       </Link>
     </div>

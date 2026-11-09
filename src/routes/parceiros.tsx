@@ -63,7 +63,7 @@ function PartnersPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat label="Parceiros ativos" value={String(partners.filter((p) => p.status === "Ativo").length)} />
         <Stat label="Em negociação ou renovação" value={String(partners.filter((p) => ["Negociação", "Renovação"].includes(p.status)).length)} />
         <Stat label="Investimento mensal (ativos)" value={brl(monthly)} />
@@ -112,7 +112,7 @@ function PartnersPage() {
               {rows.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell>
-                    <Link to="/parceiros/$id" params={{ id: p.id }} className="font-medium hover:text-primary">{p.company}</Link>
+                    <Link to="/parceiros/$id" params={{ id: p.id }} className="font-medium hover:text-primary-ink">{p.company}</Link>
                     <div className="text-xs text-muted-foreground">{[p.category, p.city].filter(Boolean).join(" · ")}</div>
                   </TableCell>
                   <TableCell><Pill value={p.status} /></TableCell>

@@ -71,7 +71,7 @@ export function NotificationsBell() {
           ))}
         </ul>
         <div className="border-t border-border px-4 py-2">
-          <button type="button" className="text-xs font-medium text-primary hover:underline" onClick={() => void nav({ to: "/notificacoes" })}>
+          <button type="button" className="text-xs font-medium text-primary-ink hover:underline" onClick={() => void nav({ to: "/notificacoes" })}>
             Ver todas
           </button>
         </div>

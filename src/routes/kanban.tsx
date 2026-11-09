@@ -226,7 +226,7 @@ function KanbanPage() {
                               {t.assignee_id && (
                                 <span
                                   title={profileName(profiles, t.assignee_id)}
-                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-[10px] font-semibold text-primary"
+                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-[10px] font-semibold text-primary-ink"
                                 >
                                   {initialsOf(profileName(profiles, t.assignee_id))}
                                 </span>

@@ -265,7 +265,7 @@ function CalendarPage() {
                       </button>
                     ))}
                     {items > 3 && (
-                      <button type="button" onClick={() => setView("lista")} className="px-1 text-[11px] text-primary hover:underline">
+                      <button type="button" onClick={() => setView("lista")} className="px-1 text-[11px] text-primary-ink hover:underline">
                         +{items - 3} mais
                       </button>
                     )}

@@ -100,7 +100,7 @@ function WorkflowsPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {TEMPLATES.map((t) => (
               <button key={t.name} type="button" onClick={() => setOpen(t)} className="rounded-xl border border-border p-3 text-left transition hover:border-primary/40">
-                <div className="flex items-center gap-2 text-sm font-medium"><Zap className="h-4 w-4 text-primary" /> {t.name}</div>
+                <div className="flex items-center gap-2 text-sm font-medium"><Zap className="h-4 w-4 text-primary-ink" /> {t.name}</div>
                 <p className="mt-1 text-xs text-muted-foreground">{t.description}</p>
               </button>
             ))}

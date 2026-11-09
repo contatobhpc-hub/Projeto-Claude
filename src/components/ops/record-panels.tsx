@@ -35,7 +35,7 @@ export function Panel({ title, children, actions, className }: { title?: string;
     <section className={`rounded-2xl border border-border bg-card p-5 ${className ?? ""}`}>
       {(title || actions) && (
         <div className="mb-4 flex items-center justify-between gap-3">
-          {title && <h2 className="font-display text-sm font-semibold">{title}</h2>}
+          {title && <h2 className="font-display text-base font-bold">{title}</h2>}
           {actions}
         </div>
       )}
@@ -55,12 +55,21 @@ export function EmptyState({ icon: Icon, title, desc, action }: { icon: LucideIc
   );
 }
 
-export function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+export function Stat({ label, value, hint, emphasis, tone }: { label: string; value: string; hint?: string; emphasis?: boolean; tone?: "bad" }) {
+  if (emphasis) {
+    return (
+      <div className="rounded-2xl bg-brand-dark px-4 py-4 text-white sm:px-5 dark:bg-[#0b3a43]">
+        <div className="text-[13px] text-white/70">{label}</div>
+        <div className="mt-1 font-display text-[28px] font-bold leading-none tabular-nums">{value}</div>
+        {hint && <div className="mt-1.5 text-xs text-brand-lime">{hint}</div>}
+      </div>
+    );
+  }
   return (
-    <div className="rounded-2xl border border-border bg-card px-5 py-4">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 font-display text-2xl font-semibold tabular-nums">{value}</div>
-      {hint && <div className="mt-0.5 text-xs text-muted-foreground">{hint}</div>}
+    <div className="rounded-2xl border border-border bg-card px-4 py-4 sm:px-5">
+      <div className="text-[13px] text-muted-foreground">{label}</div>
+      <div className={`mt-1 font-display text-[28px] font-bold leading-none tabular-nums ${tone === "bad" && value !== "0" ? "text-destructive" : ""}`}>{value}</div>
+      {hint && <div className="mt-1.5 text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
 }

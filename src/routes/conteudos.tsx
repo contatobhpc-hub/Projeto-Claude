@@ -501,7 +501,7 @@ function Versions({
             <div className="flex items-center justify-between gap-2">
               <button type="button" className="min-w-0 text-left" onClick={() => setOpenId(openId === v.id ? null : v.id)}>
                 <div className="text-sm font-medium">
-                  v{v.version_no} {i === 0 && <span className="text-xs font-normal text-primary">atual</span>}
+                  v{v.version_no} {i === 0 && <span className="text-xs font-normal text-primary-ink">atual</span>}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {profileName(profiles, v.created_by)} · {format(new Date(v.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}

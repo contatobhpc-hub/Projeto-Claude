@@ -83,7 +83,7 @@ function EventPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Faltam" value={d === null ? "—" : d < 0 ? "realizado" : d === 0 ? "hoje" : `${d} dias`} />
         <Stat label="Checklist" value={checklist.length ? `${Math.round((done / checklist.length) * 100)}%` : "—"} hint={`${done} de ${checklist.length} itens`} />
         <Stat
@@ -115,7 +115,7 @@ function EventPage() {
             <InfoRow label="Equipe">{e.team_ids.length ? e.team_ids.map((t) => profileName(profiles, t)).join(", ") : "—"}</InfoRow>
             <InfoRow label="Local">{[e.venue, e.city].filter(Boolean).join(" · ") || "—"}</InfoRow>
             <InfoRow label="Agência">{e.agency || "—"}</InfoRow>
-            <InfoRow label="Campanha">{campaign ? <Link to="/campanhas/$id" params={{ id: campaign.id }} className="hover:text-primary">{campaign.name}</Link> : "—"}</InfoRow>
+            <InfoRow label="Campanha">{campaign ? <Link to="/campanhas/$id" params={{ id: campaign.id }} className="hover:text-primary-ink">{campaign.name}</Link> : "—"}</InfoRow>
             <InfoRow label="Parceiros">
               {e.partner_ids.length
                 ? e.partner_ids.map((pid, i) => {
@@ -123,7 +123,7 @@ function EventPage() {
                     return p ? (
                       <span key={pid}>
                         {i > 0 && ", "}
-                        <Link to="/parceiros/$id" params={{ id: p.id }} className="hover:text-primary">{p.company}</Link>
+                        <Link to="/parceiros/$id" params={{ id: p.id }} className="hover:text-primary-ink">{p.company}</Link>
                       </span>
                     ) : null;
                   })

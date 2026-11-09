@@ -132,7 +132,7 @@ function Overview({ year }: { year: number }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label={`Aprovado ${year}`} value={brl(total.approved)} />
         <Stat label="Comprometido" value={brl(total.committed)} hint="compras aprovadas + notas a pagar" />
         <Stat label="Realizado" value={brl(total.spent)} hint={total.approved ? `${Math.round((total.spent / total.approved) * 100)}% do aprovado` : undefined} />
@@ -374,7 +374,7 @@ function Payments() {
 
   return (
     <div className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat label="A pagar" value={brl(toPay.reduce((s, p) => s + Number(p.value), 0))} hint={`${toPay.length} pagamentos`} />
         <Stat label="Próximos 7 dias" value={brl(next7.reduce((s, p) => s + Number(p.value), 0))} hint={`${next7.length} pagamentos`} />
         <Stat label="Atrasados" value={brl(late.reduce((s, p) => s + Number(p.value), 0))} hint={`${late.length} pagamentos`} />

@@ -208,7 +208,7 @@ function PlanningPage() {
                     <div className="text-[11px] text-muted-foreground">Nenhuma campanha começa neste mês</div>
                   ) : (
                     list.map((c) => (
-                      <Link key={c.id} to="/campanhas/$id" params={{ id: c.id }} className="block truncate text-[11px] text-primary hover:underline">
+                      <Link key={c.id} to="/campanhas/$id" params={{ id: c.id }} className="block truncate text-[11px] text-primary-ink hover:underline">
                         {c.name}
                       </Link>
                     ))

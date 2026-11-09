@@ -61,7 +61,7 @@ function CampaignsPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat label="Em andamento" value={String(active)} />
         <Stat label="Aguardando aprovação" value={String(waiting)} />
         <Stat label="Orçamento previsto (sem canceladas)" value={brl(budget)} />
@@ -113,7 +113,7 @@ function CampaignsPage() {
               {rows.map((c) => (
                 <TableRow key={c.id} className="cursor-pointer">
                   <TableCell>
-                    <Link to="/campanhas/$id" params={{ id: c.id }} className="font-medium hover:text-primary">
+                    <Link to="/campanhas/$id" params={{ id: c.id }} className="font-medium hover:text-primary-ink">
                       {c.name}
                     </Link>
                     <div className="text-xs text-muted-foreground">

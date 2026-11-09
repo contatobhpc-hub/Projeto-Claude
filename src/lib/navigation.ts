@@ -49,7 +49,7 @@ export const navGroups: NavGroup[] = [
   {
     label: "Visão Geral",
     items: [
-      { title: "Dashboard", to: "/", icon: LayoutDashboard, module: "dashboard", phase: 1 },
+      { title: "Painel", to: "/", icon: LayoutDashboard, module: "dashboard", phase: 1 },
       { title: "Central de Prioridades", to: "/prioridades", icon: AlertTriangle, module: "prioridades", phase: 5 },
       { title: "Notificações", to: "/notificacoes", icon: Bell, module: "notificacoes", phase: 5 },
     ],

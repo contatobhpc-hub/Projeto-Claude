@@ -33,17 +33,17 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-sidebar-border [background-image:linear-gradient(180deg,color-mix(in_oklab,var(--color-primary)_6%,transparent),transparent_38%)]"
+      className="border-r-0"
     >
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-3 px-2 py-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-border shadow-[var(--shadow-glow)]">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
             <img src="/favicon.png" alt="Logo Sicoob Credibelo" className="h-full w-full object-contain" />
           </div>
           {!collapsed && (
             <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate font-display text-sm font-semibold tracking-tight">Marketing Hub</span>
-              <span className="truncate text-[11px] tracking-wide text-muted-foreground">Sicoob Credibelo</span>
+              <span className="truncate font-display text-[15px] font-bold text-white">Marketing Hub</span>
+              <span className="truncate text-[11px] text-sidebar-foreground/70">Sicoob Credibelo</span>
             </div>
           )}
         </div>
@@ -53,7 +53,7 @@ export function AppSidebar() {
         {groups.map((group) => (
           <SidebarGroup key={group.label} className="py-1.5">
             {!collapsed && (
-              <SidebarGroupLabel className="eyebrow px-2 text-[10px] text-muted-foreground/60">
+              <SidebarGroupLabel className="px-2 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-sidebar-foreground/55">
                 {group.label}
               </SidebarGroupLabel>
             )}
@@ -70,15 +70,15 @@ export function AppSidebar() {
                           asChild
                           isActive={active}
                           tooltip={item.title}
-                          className="group/nav relative h-9 overflow-hidden rounded-lg text-[13px] font-medium text-sidebar-foreground/75 transition-all duration-300 [transition-timing-function:var(--ease-premium)] hover:bg-sidebar-accent hover:text-sidebar-foreground data-[active=true]:bg-primary/12 data-[active=true]:text-foreground"
+                          className="group/nav relative h-10 overflow-hidden rounded-[10px] text-[13.5px] font-medium text-sidebar-foreground/85 transition-colors hover:bg-white/8 hover:text-white data-[active=true]:bg-[#00ae9d]/20 data-[active=true]:font-semibold data-[active=true]:text-white"
                         >
                           <Link to={item.to}>
                             <span
-                              className={`absolute left-0 top-1/2 w-[2px] -translate-y-1/2 rounded-r bg-primary transition-all duration-300 ${
-                                active ? "h-5 opacity-100" : "h-0 opacity-0 group-hover/nav:h-3 group-hover/nav:opacity-60"
+                              className={`absolute left-0 top-1/2 w-[3px] -translate-y-1/2 rounded-r bg-brand-lime transition-all duration-300 ${
+                                active ? "h-6 opacity-100" : "h-0 opacity-0"
                               }`}
                             />
-                            <item.icon className={`h-4 w-4 shrink-0 ${active ? "text-primary" : ""}`} strokeWidth={1.75} />
+                            <item.icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-[#4fd1c2]" : "opacity-80"}`} strokeWidth={1.75} />
                             <span className="truncate">{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
@@ -106,13 +106,13 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-sidebar-border">
         <div className="flex items-center gap-3 px-2 py-2">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold text-primary ring-1 ring-primary/20">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
             {initialsOf(profile?.full_name || profile?.email || "")}
           </div>
           {!collapsed && (
             <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-[13px] font-medium">{profile?.full_name || profile?.email}</span>
-              <span className="truncate text-[11px] text-muted-foreground">{profile?.role?.name ?? "Sem cargo"}</span>
+              <span className="truncate text-[13px] font-semibold text-white">{profile?.full_name || profile?.email}</span>
+              <span className="truncate text-[11px] text-sidebar-foreground/70">{profile?.role?.name ?? "Sem cargo"}</span>
             </div>
           )}
         </div>

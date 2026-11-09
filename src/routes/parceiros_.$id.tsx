@@ -82,7 +82,7 @@ function PartnerPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Valor contratado" value={brl(contracted)} hint={`${contracts.length} contratos`} />
         <Stat label="Patrocínios" value={String(sponsorships.length)} hint={brl(sponsorships.reduce((s, x) => s + Number(x.value || 0), 0))} />
         <Stat label="Eventos" value={String(events.length)} />

@@ -80,7 +80,7 @@ function PurchasesPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {approver && <Stat label="Aguardando sua decisão" value={String(counts.decidir)} />}
         <Stat label="Em aprovação (valor)" value={brl(counts.aguardando)} />
         <Stat label="Aprovadas em andamento" value={String(counts.andamento)} />

@@ -111,7 +111,7 @@ function ProjectsPage() {
               {rows.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell>
-                    <Link to="/projetos/$id" params={{ id: p.id }} className="font-medium hover:text-primary">
+                    <Link to="/projetos/$id" params={{ id: p.id }} className="font-medium hover:text-primary-ink">
                       {p.name}
                     </Link>
                     <div className="text-xs text-muted-foreground">

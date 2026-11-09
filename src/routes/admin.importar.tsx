@@ -148,7 +148,7 @@ function ImportPage() {
 
         {results && (
           <section className="space-y-2 rounded-2xl border border-border bg-card p-5">
-            <h2 className="flex items-center gap-2 font-semibold"><CheckCircle2 className="h-4 w-4 text-primary" /> Importação concluída</h2>
+            <h2 className="flex items-center gap-2 font-semibold"><CheckCircle2 className="h-4 w-4 text-primary-ink" /> Importação concluída</h2>
             <ul className="text-sm">
               {results.map((r) => (
                 <li key={r.label} className="flex justify-between border-b border-border py-1 last:border-0">

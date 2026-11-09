@@ -84,7 +84,7 @@ function ContractsPage() {
         <BucketCard label="Vencidos" n={counts.expired} tone="text-red-500" active={bucket === "expired"} onClick={() => setBucket(bucket === "expired" ? "all" : "expired")} />
         <BucketCard label="Vencem em até 30 dias" n={counts.d30} tone="text-orange-500" active={bucket === "30"} onClick={() => setBucket(bucket === "30" ? "all" : "30")} />
         <BucketCard label="Vencem em 31 a 90 dias" n={counts.d90} tone="text-amber-500" active={bucket === "90"} onClick={() => setBucket(bucket === "90" ? "all" : "90")} />
-        <BucketCard label="Aguardando aprovação" n={counts.approval} tone="text-primary" active={bucket === "approval"} onClick={() => setBucket(bucket === "approval" ? "all" : "approval")} />
+        <BucketCard label="Aguardando aprovação" n={counts.approval} tone="text-primary-ink" active={bucket === "approval"} onClick={() => setBucket(bucket === "approval" ? "all" : "approval")} />
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row">
@@ -128,7 +128,7 @@ function ContractsPage() {
               {rows.map(({ c, a }) => (
                 <TableRow key={c.id}>
                   <TableCell>
-                    <Link to="/contratos/$id" params={{ id: c.id }} className="font-medium hover:text-primary">{c.object}</Link>
+                    <Link to="/contratos/$id" params={{ id: c.id }} className="font-medium hover:text-primary-ink">{c.object}</Link>
                     <div className="text-xs text-muted-foreground">
                       {[who(c), c.category].filter(Boolean).join(" · ")}
                       {c.approval_status === "Aguardando" && <span className="ml-1 text-amber-600 dark:text-amber-300">· aguardando aprovação</span>}

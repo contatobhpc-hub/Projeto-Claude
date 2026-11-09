@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Asap:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -94,9 +94,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  const themeInit = `(function(){try{var t=localStorage.getItem('mhub.theme');if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}var r=document.documentElement;if(t==='dark'){r.classList.add('dark');}else{r.classList.remove('dark');}r.style.colorScheme=t;}catch(e){document.documentElement.classList.add('dark');}})();`;
+  // Tema claro é o padrão; quem escolher o escuro tem a escolha guardada neste navegador.
+  const themeInit = `(function(){try{var t=localStorage.getItem('mhub.theme.v2')==='dark'?'dark':'light';var r=document.documentElement;r.classList.toggle('dark',t==='dark');r.style.colorScheme=t;}catch(e){}})();`;
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <head suppressHydrationWarning>
         <HeadContent />
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeInit }} />
@@ -161,7 +162,7 @@ function PendingApproval({ email }: { email: string }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center shadow-lg">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/12 text-primary">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/12 text-primary-ink">
           <Clock className="h-6 w-6" />
         </div>
         <h1 className="font-display text-xl font-semibold">Cadastro aguardando aprovação</h1>

@@ -65,7 +65,7 @@ function ContractPage() {
             <Pill value={c.status} />
             {a.level !== "none" && <AlertPill tone={ALERT_TONE[a.level]}>{a.label}</AlertPill>}
             {partner ? (
-              <Link to="/parceiros/$id" params={{ id: partner.id }} className="text-sm text-muted-foreground hover:text-primary">{partner.company}</Link>
+              <Link to="/parceiros/$id" params={{ id: partner.id }} className="text-sm text-muted-foreground hover:text-primary-ink">{partner.company}</Link>
             ) : (
               <span className="text-sm text-muted-foreground">{c.company}</span>
             )}
@@ -77,7 +77,7 @@ function ContractPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Valor total" value={brl(Number(c.value || 0))} />
         <Stat label="Vigência" value={`${fmtDate(c.start_date).slice(0, 5)} – ${fmtDate(c.end_date)}`} hint={elapsed !== null ? `${elapsed}% do prazo decorrido` : undefined} />
         <Stat label="Renovação" value={c.auto_renewal ? "Automática" : fmtDate(c.renewal_date)} />
@@ -99,7 +99,7 @@ function ContractPage() {
               <InfoRow label="Centro de custo">{c.cost_center || "—"}</InfoRow>
               <InfoRow label="Responsável">{c.owner_id ? profileName(profiles, c.owner_id) : "—"}</InfoRow>
               <InfoRow label="Campanha">
-                {campaign ? <Link to="/campanhas/$id" params={{ id: campaign.id }} className="hover:text-primary">{campaign.name}</Link> : "—"}
+                {campaign ? <Link to="/campanhas/$id" params={{ id: campaign.id }} className="hover:text-primary-ink">{campaign.name}</Link> : "—"}
               </InfoRow>
               <InfoRow label="Observações"><span className="whitespace-pre-wrap">{c.notes || "—"}</span></InfoRow>
             </Panel>

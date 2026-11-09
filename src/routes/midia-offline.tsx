@@ -70,7 +70,7 @@ function MediaPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Stat label="Instaladas agora" value={String(installed.length)} />
         <Stat label="Retirada atrasada ou nos próximos 7 dias" value={String(toRemove.length)} />
         <Stat label="Investimento (sem canceladas)" value={brl(list.filter((m) => m.status !== "Cancelado").reduce((s, m) => s + Number(m.value || 0), 0))} />

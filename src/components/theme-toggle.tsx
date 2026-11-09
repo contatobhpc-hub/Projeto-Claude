@@ -3,13 +3,15 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type Theme = "light" | "dark";
-const KEY = "mhub.theme";
+const KEY = "mhub.theme.v2";
 
 function getInitial(): Theme {
-  if (typeof window === "undefined") return "dark";
-  const saved = window.localStorage.getItem(KEY) as Theme | null;
-  if (saved === "light" || saved === "dark") return saved;
-  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  if (typeof window === "undefined") return "light";
+  try {
+    return window.localStorage.getItem(KEY) === "dark" ? "dark" : "light";
+  } catch {
+    return "light";
+  }
 }
 
 export function applyTheme(theme: Theme) {
@@ -19,7 +21,7 @@ export function applyTheme(theme: Theme) {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

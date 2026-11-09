@@ -178,7 +178,7 @@ function AnalyticsPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Tarefas concluídas" value={m.doneTotal.toLocaleString("pt-BR")} hint={m.leadDays !== null ? `em média ${m.leadDays} dia(s) da criação à entrega` : undefined} />
         <Stat label="Entregas no prazo" value={m.onTimePct === null ? "—" : `${m.onTimePct}%`} hint="das tarefas concluídas que tinham prazo" />
         <Stat label="Conteúdos publicados" value={String(m.published)} />

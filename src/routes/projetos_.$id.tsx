@@ -74,7 +74,7 @@ function ProjectPage() {
             <Pill value={p.status} />
             <Pill value={p.priority} />
             {campaign && (
-              <Link to="/campanhas/$id" params={{ id: campaign.id }} className="text-sm text-muted-foreground hover:text-primary">
+              <Link to="/campanhas/$id" params={{ id: campaign.id }} className="text-sm text-muted-foreground hover:text-primary-ink">
                 Campanha: {campaign.name}
               </Link>
             )}
@@ -92,7 +92,7 @@ function ProjectPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Andamento" value={progress === null ? "—" : `${progress}%`} hint={`${tasks.length} tarefas`} />
         <Stat label="Tarefas atrasadas" value={String(late)} />
         <Stat label="Prazo" value={fmtDate(p.due_date)} />

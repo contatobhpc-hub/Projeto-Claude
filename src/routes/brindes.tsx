@@ -68,7 +68,7 @@ function InventoryPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Itens cadastrados" value={String(items.length)} />
         <Stat label="Valor em estoque" value={brl(value)} />
         <Stat label="Unidades reservadas" value={String(reserved)} />

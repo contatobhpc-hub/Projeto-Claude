@@ -22,7 +22,7 @@ export function Field({ label, children, className, hint }: { label: string; chi
 
 export function Pill({ value, className }: { value: string; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-medium", toneOf(value), className)}>
+    <span className={cn("inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-semibold", toneOf(value), className)}>
       {value}
     </span>
   );
