@@ -159,7 +159,7 @@ function Dashboard() {
   return (
     <>
       <div className="mb-6 flex flex-col gap-1 sm:mb-8">
-        <p className="text-sm capitalize text-muted-foreground">{format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}</p>
+        <p className="text-sm text-muted-foreground first-letter:uppercase">{format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}</p>
         <h1 className="font-display text-[clamp(1.45rem,2.6vw,2rem)] font-bold leading-tight">
           {hello}
           {firstName ? `, ${firstName}` : ""}. <span className="text-muted-foreground">{headline}</span>

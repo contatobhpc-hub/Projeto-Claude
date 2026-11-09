@@ -12,22 +12,18 @@ import { useQuickCreate } from "@/components/quick-create";
 
 type Hit = { id: string; label: string; sub: string; group: string; to: string; params?: Record<string, string> };
 
-/** O que a busca procura: tabela, coluna do nome, módulo exigido e para onde leva. */
-const SOURCES: { table: string; col: string; extra?: string; group: string; module: ModuleKey; to: string; detail?: boolean; sub: (r: Record<string, unknown>) => string }[] = [
-  { table: "campaigns", col: "name", extra: "status, start_date", group: "Campanhas", module: "campanhas", to: "/campanhas/$id", detail: true, sub: (r) => String(r.status ?? "") },
-  { table: "projects", col: "name", extra: "status", group: "Projetos", module: "projetos", to: "/projetos/$id", detail: true, sub: (r) => String(r.status ?? "") },
-  { table: "tasks", col: "title", extra: "status", group: "Tarefas", module: "kanban", to: "/kanban", sub: (r) => String(r.status ?? "") },
-  { table: "contracts", col: "object", extra: "company", group: "Contratos", module: "contratos", to: "/contratos/$id", detail: true, sub: (r) => String(r.company ?? "") },
-  { table: "partners", col: "company", extra: "category", group: "Parceiros", module: "parceiros", to: "/parceiros/$id", detail: true, sub: (r) => String(r.category ?? "") },
-  { table: "events", col: "name", extra: "event_date", group: "Eventos", module: "eventos", to: "/eventos/$id", detail: true, sub: (r) => String(r.event_date ?? "") },
-  { table: "sponsorships", col: "event_name", extra: "institution", group: "Patrocínios", module: "patrocinios", to: "/patrocinios", sub: (r) => String(r.institution ?? "") },
-  { table: "content_items", col: "title", extra: "category", group: "Conteúdos", module: "conteudos", to: "/conteudos", sub: (r) => String(r.category ?? "") },
-  { table: "offline_media", col: "title", extra: "city", group: "Mídia offline", module: "midia", to: "/midia-offline", sub: (r) => String(r.city ?? "") },
-];
-
-// O cliente tipado não aceita nome de tabela variável; a busca só lê colunas simples.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fromAny = (table: string) => (supabase as any).from(table);
+/** Para onde cada tipo de resultado leva, e qual módulo precisa estar liberado. */
+const KINDS: Record<string, { group: string; module: ModuleKey; to: string; detail?: boolean }> = {
+  campaigns: { group: "Campanhas", module: "campanhas", to: "/campanhas/$id", detail: true },
+  projects: { group: "Projetos", module: "projetos", to: "/projetos/$id", detail: true },
+  tasks: { group: "Tarefas", module: "kanban", to: "/kanban" },
+  contracts: { group: "Contratos", module: "contratos", to: "/contratos/$id", detail: true },
+  partners: { group: "Parceiros", module: "parceiros", to: "/parceiros/$id", detail: true },
+  events: { group: "Eventos", module: "eventos", to: "/eventos/$id", detail: true },
+  sponsorships: { group: "Patrocínios", module: "patrocinios", to: "/patrocinios" },
+  content_items: { group: "Conteúdos", module: "conteudos", to: "/conteudos" },
+  offline_media: { group: "Mídia offline", module: "midia", to: "/midia-offline" },
+};
 
 const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -53,26 +49,18 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
     let cancelled = false;
     setLoading(true);
     const t = setTimeout(async () => {
-      const pattern = `%${term.replace(/[%_,()]/g, " ")}%`;
-      const results = await Promise.all(
-        SOURCES.filter((s) => can(s.module, "view")).map(async (s) => {
-          const { data } = await fromAny(s.table)
-            .select(`id, ${s.col}${s.extra ? `, ${s.extra}` : ""}`)
-            .is("deleted_at", null)
-            .ilike(s.col, pattern)
-            .limit(5);
-          return ((data ?? []) as unknown as Record<string, unknown>[]).map<Hit>((r) => ({
-            id: `${s.table}:${String(r.id)}`,
-            label: String(r[s.col] ?? ""),
-            sub: s.sub(r),
-            group: s.group,
-            to: s.to,
-            params: s.detail ? { id: String(r.id) } : undefined,
-          }));
-        }),
-      );
+      // Uma chamada só; o banco ignora acentos e só devolve o que a pessoa pode ver
+      type Row = { kind: string; id: string; label: string; sub: string | null };
+      const db = supabase as unknown as { rpc: (fn: string, args: object) => Promise<{ data: Row[] | null }> };
+      const { data } = await db.rpc("global_search", { _q: term, _limit: 5 });
+      const results = (data ?? [])
+        .filter((r) => KINDS[r.kind] && can(KINDS[r.kind].module, "view"))
+        .map<Hit>((r) => {
+          const k = KINDS[r.kind];
+          return { id: `${r.kind}:${r.id}`, label: r.label, sub: r.sub ?? "", group: k.group, to: k.to, params: k.detail ? { id: r.id } : undefined };
+        });
       if (!cancelled) {
-        setHits(results.flat());
+        setHits(results);
         setLoading(false);
       }
     }, 200);
