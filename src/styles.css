@@ -336,3 +336,50 @@
 #lovable-badge {
   display: none !important;
 }
+
+/* Tabelas de listagem viram cartões no celular: título na primeira linha, demais dados em seguida */
+@media (max-width: 767.98px) {
+  table.table-cards,
+  table.table-cards tbody,
+  table.table-cards tfoot {
+    display: block;
+    width: 100%;
+  }
+  table.table-cards thead {
+    display: none;
+  }
+  table.table-cards tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+  }
+  table.table-cards tr:hover {
+    background: var(--card);
+  }
+  table.table-cards td {
+    display: block;
+    width: auto !important;
+    padding: 0;
+    border: 0;
+    text-align: left !important;
+    font-size: 13px;
+  }
+  table.table-cards td:first-child {
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+  table.table-cards td:empty {
+    display: none;
+  }
+  table.table-cards td[colspan] {
+    flex-basis: 100%;
+    padding: 20px 0;
+    text-align: center !important;
+  }
+}

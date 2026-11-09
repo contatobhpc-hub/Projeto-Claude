@@ -111,8 +111,8 @@ function ContractsPage() {
       {!isLoading && contracts.length === 0 ? (
         <EmptyState icon={ScrollText} title="Nenhum contrato cadastrado" />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <Table>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+          <Table className="table-cards">
             <TableHeader>
               <TableRow>
                 <TableHead>Contrato</TableHead>

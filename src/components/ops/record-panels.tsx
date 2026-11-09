@@ -32,7 +32,7 @@ import { profileName, useProfiles } from "@/lib/team";
 
 export function Panel({ title, children, actions, className }: { title?: string; children: ReactNode; actions?: ReactNode; className?: string }) {
   return (
-    <section className={`rounded-2xl border border-border bg-card p-5 ${className ?? ""}`}>
+    <section className={`min-w-0 rounded-2xl border border-border bg-card p-4 sm:p-5 ${className ?? ""}`}>
       {(title || actions) && (
         <div className="mb-4 flex items-center justify-between gap-3">
           {title && <h2 className="font-display text-base font-bold">{title}</h2>}

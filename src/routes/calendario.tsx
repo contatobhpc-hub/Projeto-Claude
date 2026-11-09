@@ -99,9 +99,16 @@ function CalendarPage() {
     e.assignee_id === profile?.id || (e.participant_ids ?? []).includes(profile?.id ?? "");
 
   const filteredEvents = useMemo(
-    () => events.filter((e) => (category === ALL || e.category === category) && (!onlyMine || mine(e))),
+    () =>
+      events.filter(
+        (e) =>
+          (category === ALL || e.category === category) &&
+          (!onlyMine || mine(e)) &&
+          // Com as faixas de campanha ligadas, os marcos "Início —" / "Término —" do app antigo seriam repetidos
+          !(showCampaigns && can("campanhas", "view") && e.category === "Campanha" && /^(Início|Término) — /.test(e.title)),
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [events, category, onlyMine, profile?.id],
+    [events, category, onlyMine, profile?.id, showCampaigns],
   );
 
   const deadlines = useMemo(
@@ -202,7 +209,7 @@ function CalendarPage() {
               <Button variant="ghost" size="sm" onClick={() => setCursor(startOfMonth(new Date()))}>
                 Hoje
               </Button>
-              <h2 className="ml-2 font-display text-lg font-semibold capitalize">{format(cursor, "MMMM 'de' yyyy", { locale: ptBR })}</h2>
+              <h2 className="ml-2 whitespace-nowrap font-display text-lg font-bold first-letter:uppercase">{format(cursor, "MMMM 'de' yyyy", { locale: ptBR })}</h2>
             </>
           )}
           {view === "lista" && <h2 className="font-display text-lg font-semibold">Próximos 60 dias</h2>}

@@ -223,8 +223,8 @@ function Budget({ year }: { year: number }) {
       {!isLoading && lines.length === 0 ? (
         <EmptyState icon={Wallet} title={`Nenhum orçamento para ${year}`} desc="Crie uma linha por categoria (e, se quiser, por centro de custo)." />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <Table>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+          <Table className="table-cards">
             <TableHeader>
               <TableRow>
                 <TableHead>Categoria</TableHead>
@@ -316,8 +316,8 @@ function Invoices({ year }: { year: number }) {
           <Button onClick={() => setOpen("new")}><Plus className="h-4 w-4" /> Lançar nota</Button>
         </Can>
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <Table>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+        <Table className="table-cards">
           <TableHeader>
             <TableRow>
               <TableHead>Nota</TableHead>
@@ -392,8 +392,8 @@ function Payments() {
           <Button size="sm" variant="outline" onClick={() => setOpen("new")}><Plus className="h-4 w-4" /> Pagamento avulso</Button>
         </Can>
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <Table>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+        <Table className="table-cards">
           <TableHeader>
             <TableRow>
               <TableHead>Pagamento</TableHead>
@@ -483,8 +483,8 @@ function Expenses({ year }: { year: number }) {
         </Can>
       </div>
       <p className="text-sm text-muted-foreground">{rows.length} despesas · {brl(total)}</p>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <Table>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+        <Table className="table-cards">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Data</TableHead>
@@ -548,8 +548,8 @@ function Suppliers({ year }: { year: number }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">Fornecedores são os parceiros cadastrados. Totais pagos em {year} e notas em aberto.</p>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <Table>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+        <Table className="table-cards">
           <TableHeader>
             <TableRow>
               <TableHead>Fornecedor</TableHead>
@@ -603,8 +603,8 @@ function CostCenters() {
           <Button size="sm" onClick={() => setOpen("new")}><Plus className="h-4 w-4" /> Novo centro de custo</Button>
         </Can>
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <Table>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card max-md:overflow-visible max-md:rounded-none max-md:border-0 max-md:bg-transparent">
+        <Table className="table-cards">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[120px]">Código</TableHead>
