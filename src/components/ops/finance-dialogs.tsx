@@ -187,7 +187,7 @@ export function PurchaseDialog({
         <ul className="space-y-1 text-sm">
           {approvals.map((a) => (
             <li key={a.id} className="flex items-start gap-2">
-              {a.decision === "Aprovado" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />}
+              {a.decision === "Aprovado" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />}
               <span>
                 <strong className="font-medium">{profileName(profiles, a.decided_by)}</strong> ({a.level}) {a.decision.toLowerCase()} em{" "}
                 {format(new Date(a.decided_at), "dd/MM/yy HH:mm")}

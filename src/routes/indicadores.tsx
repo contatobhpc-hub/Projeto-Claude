@@ -94,7 +94,7 @@ function IndicatorsPage() {
                     </div>
                   </div>
                   {delta !== null && delta !== 0 && (
-                    <span className={`flex items-center gap-0.5 text-xs ${(delta > 0) === (ind.direction === "up") ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                    <span className={`flex items-center gap-0.5 text-xs ${(delta > 0) === (ind.direction === "up") ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
                       {delta > 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                       {fmt(Math.abs(delta))}
                     </span>

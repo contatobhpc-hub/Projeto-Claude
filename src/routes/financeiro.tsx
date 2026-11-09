@@ -151,7 +151,7 @@ function Overview({ year }: { year: number }) {
                     a.tone === "danger" ? "bg-red-500/10" : a.tone === "warning" ? "bg-amber-500/10" : "bg-muted/50"
                   }`}
                 >
-                  <AlertTriangle className={`h-4 w-4 shrink-0 ${a.tone === "danger" ? "text-red-500" : a.tone === "warning" ? "text-amber-500" : "text-muted-foreground"}`} />
+                  <AlertTriangle className={`h-4 w-4 shrink-0 ${a.tone === "danger" ? "text-red-600 dark:text-red-400" : a.tone === "warning" ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}`} />
                   {a.text}
                 </button>
               </li>
@@ -176,7 +176,7 @@ function Overview({ year }: { year: number }) {
                     <span className="font-medium">{r.category}</span>
                     <span className="tabular-nums text-muted-foreground">
                       <span className="text-foreground">{brl(r.spent)}</span> realizado · {brl(r.committed)} comprometido · de{" "}
-                      <span className={over ? "font-medium text-red-500" : "text-foreground"}>{brl(r.approved)}</span>
+                      <span className={over ? "font-medium text-red-600 dark:text-red-400" : "text-foreground"}>{brl(r.approved)}</span>
                     </span>
                   </div>
                   <div className="relative h-2.5 overflow-hidden rounded-full bg-muted">
@@ -254,7 +254,7 @@ function Budget({ year }: { year: number }) {
                     </TableCell>
                     <TableCell className="text-right tabular-nums text-muted-foreground">{brl(u?.committed ?? 0)}</TableCell>
                     <TableCell className="text-right tabular-nums">{brl(u?.spent ?? 0)}</TableCell>
-                    <TableCell className={`text-right font-medium tabular-nums ${saldo < 0 ? "text-red-500" : ""}`}>{brl(saldo)}</TableCell>
+                    <TableCell className={`text-right font-medium tabular-nums ${saldo < 0 ? "text-red-600 dark:text-red-400" : ""}`}>{brl(saldo)}</TableCell>
                   </TableRow>
                 );
               })}
@@ -414,7 +414,7 @@ function Payments() {
                     <div className="font-medium">{p.description}</div>
                     <div className="text-xs text-muted-foreground">{partners.find((x) => x.id === p.partner_id)?.company ?? ""}</div>
                   </TableCell>
-                  <TableCell className={`text-sm tabular-nums ${st === "Atrasado" ? "font-medium text-red-500" : "text-muted-foreground"}`}>
+                  <TableCell className={`text-sm tabular-nums ${st === "Atrasado" ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
                     {fmtDate(st === "Pago" ? p.paid_at : p.due_date)}
                   </TableCell>
                   <TableCell className="text-sm">{p.method}</TableCell>
@@ -576,7 +576,7 @@ function Suppliers({ year }: { year: number }) {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <span className="text-sm text-amber-500">{p.rating === null ? "—" : "★".repeat(p.rating) || "0"}</span>
+                    <span className="text-sm text-amber-600 dark:text-amber-400">{p.rating === null ? "—" : "★".repeat(p.rating) || "0"}</span>
                   )}
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{brl(spent)}</TableCell>

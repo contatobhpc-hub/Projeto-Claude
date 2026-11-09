@@ -121,7 +121,7 @@ function ProjectsPage() {
                   <TableCell><Pill value={p.status} /></TableCell>
                   <TableCell><Pill value={p.priority} /></TableCell>
                   <TableCell className="text-sm">{p.owner_id ? profileName(profiles, p.owner_id) : "—"}</TableCell>
-                  <TableCell className={`text-sm ${isOverdue(p.due_date, p.status === "Concluído") ? "font-medium text-red-500" : "text-muted-foreground"}`}>
+                  <TableCell className={`text-sm ${isOverdue(p.due_date, p.status === "Concluído") ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
                     {fmtDate(p.due_date)}
                   </TableCell>
                   <TableCell>

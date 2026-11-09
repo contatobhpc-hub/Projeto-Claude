@@ -299,7 +299,7 @@ export function ApprovalPanel({
   return (
     <Panel title="Aprovação">
       <div className="flex items-start gap-3">
-        <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${s === "Aprovada" ? "text-emerald-500" : s === "Reprovada" ? "text-red-500" : "text-muted-foreground"}`} />
+        <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${s === "Aprovada" ? "text-emerald-600 dark:text-emerald-400" : s === "Reprovada" ? "text-red-600 dark:text-red-400" : "text-muted-foreground"}`} />
         <div className="min-w-0 flex-1 space-y-1 text-sm">
           <Pill value={s} />
           {record.approved_by && record.approved_at && (

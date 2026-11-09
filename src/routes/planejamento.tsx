@@ -83,7 +83,7 @@ function PlanningPage() {
       />
 
       {objectives.length > 0 && (
-        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-border bg-card px-5 py-4">
             <div className="text-xs text-muted-foreground">Progresso médio</div>
             <div className="mt-1 font-display text-2xl font-semibold tabular-nums">{overall.length ? `${Math.round(overall.reduce((a, b) => a + b, 0) / overall.length)}%` : "—"}</div>

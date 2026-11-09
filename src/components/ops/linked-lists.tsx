@@ -48,7 +48,7 @@ export function TaskList({ tasks, defaults }: { tasks: TaskRow[]; defaults: Part
                     <div className="text-xs text-muted-foreground">
                       {t.assignee_id ? profileName(profiles, t.assignee_id) : "Sem responsável"}
                       {t.due_date && (
-                        <span className={isOverdue(t.due_date, done) ? " font-medium text-red-500" : ""}> · prazo {fmtDate(t.due_date)}</span>
+                        <span className={isOverdue(t.due_date, done) ? " font-medium text-red-600 dark:text-red-400" : ""}> · prazo {fmtDate(t.due_date)}</span>
                       )}
                     </div>
                   </div>

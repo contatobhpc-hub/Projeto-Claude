@@ -80,10 +80,10 @@ function ContractsPage() {
         }
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-4">
-        <BucketCard label="Vencidos" n={counts.expired} tone="text-red-500" active={bucket === "expired"} onClick={() => setBucket(bucket === "expired" ? "all" : "expired")} />
-        <BucketCard label="Vencem em até 30 dias" n={counts.d30} tone="text-orange-500" active={bucket === "30"} onClick={() => setBucket(bucket === "30" ? "all" : "30")} />
-        <BucketCard label="Vencem em 31 a 90 dias" n={counts.d90} tone="text-amber-500" active={bucket === "90"} onClick={() => setBucket(bucket === "90" ? "all" : "90")} />
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <BucketCard label="Vencidos" n={counts.expired} tone="text-red-600 dark:text-red-400" active={bucket === "expired"} onClick={() => setBucket(bucket === "expired" ? "all" : "expired")} />
+        <BucketCard label="Vencem em até 30 dias" n={counts.d30} tone="text-orange-600 dark:text-orange-400" active={bucket === "30"} onClick={() => setBucket(bucket === "30" ? "all" : "30")} />
+        <BucketCard label="Vencem em 31 a 90 dias" n={counts.d90} tone="text-amber-600 dark:text-amber-400" active={bucket === "90"} onClick={() => setBucket(bucket === "90" ? "all" : "90")} />
         <BucketCard label="Aguardando aprovação" n={counts.approval} tone="text-primary-ink" active={bucket === "approval"} onClick={() => setBucket(bucket === "approval" ? "all" : "approval")} />
       </div>
 

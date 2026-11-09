@@ -456,7 +456,7 @@ function AgendaList({
                 <li key={it.m.key}>
                   <button type="button" onClick={it.m.go} className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/40">
                     <span className="w-12 text-xs text-amber-600 dark:text-amber-300">marco</span>
-                    <Flag className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+                    <Flag className="h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{it.m.title}</span>
                       <span className="block truncate text-xs text-muted-foreground">{it.m.kind}</span>

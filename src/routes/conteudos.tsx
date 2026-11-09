@@ -137,7 +137,7 @@ function ContentPage() {
                 >
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <Pill value={c.category} />
-                    {favorites.has(c.id) && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />}
+                    {favorites.has(c.id) && <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-700 dark:text-amber-300" />}
                   </div>
                   <div className="line-clamp-2 text-sm font-semibold">{c.title}</div>
                   <p className="mt-1 line-clamp-3 flex-1 whitespace-pre-line text-xs text-muted-foreground">{c.description || c.body}</p>
@@ -332,7 +332,7 @@ function ContentSheet({
                       <Copy className="h-4 w-4" />
                     </Button>
                     <Button size="icon" variant="ghost" aria-label={isFavorite ? "Tirar dos favoritos" : "Favoritar"} onClick={() => void toggleFavorite()}>
-                      <Star className={`h-4 w-4 ${isFavorite ? "fill-amber-400 text-amber-400" : ""}`} />
+                      <Star className={`h-4 w-4 ${isFavorite ? "fill-amber-400 text-amber-700 dark:text-amber-300" : ""}`} />
                     </Button>
                   </div>
                 )}

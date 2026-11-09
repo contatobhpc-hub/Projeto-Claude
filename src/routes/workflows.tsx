@@ -140,7 +140,7 @@ function WorkflowsPage() {
                     </TableCell>
                     <TableCell className="text-sm">
                       {mine.length}
-                      {mine.some((x) => x.status === "erro") && <span className="ml-1 text-xs text-red-500">({mine.filter((x) => x.status === "erro").length} com erro)</span>}
+                      {mine.some((x) => x.status === "erro") && <span className="ml-1 text-xs text-red-600 dark:text-red-400">({mine.filter((x) => x.status === "erro").length} com erro)</span>}
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Switch checked={r.active} disabled={!can("workflows", "edit")} onCheckedChange={(v) => void toggle(r, v)} aria-label={`Ativar ${r.name}`} />

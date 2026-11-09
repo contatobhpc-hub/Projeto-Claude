@@ -216,7 +216,7 @@ function KanbanPage() {
                               {t.due_date && (
                                 <span
                                   className={`flex items-center gap-1 text-[11px] ${
-                                    isOverdue(t.due_date, done) ? "font-medium text-red-500" : "text-muted-foreground"
+                                    isOverdue(t.due_date, done) ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground"
                                   }`}
                                 >
                                   <CalendarClock className="h-3 w-3" />

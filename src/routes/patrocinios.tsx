@@ -108,11 +108,11 @@ function SponsorshipsPage() {
             </Select>
           }
         >
-          <div className="grid gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Figure label="Verba do ano" value={budget ? brl(budget) : "não definida"} />
             <Figure label="Comprometido" value={brl(committed)} />
             <Figure label="Já realizado" value={brl(done)} />
-            <Figure label="Saldo" value={budget ? brl(budget - committed) : "—"} tone={budget && committed > budget ? "text-red-500" : ""} />
+            <Figure label="Saldo" value={budget ? brl(budget - committed) : "—"} tone={budget && committed > budget ? "text-red-600 dark:text-red-400" : ""} />
           </div>
           {budget > 0 && (
             <div className="mt-4">

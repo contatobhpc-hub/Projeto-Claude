@@ -525,7 +525,7 @@ export function MovementsPanel({ itemId, eventId }: { itemId?: string; eventId?:
         <ul className="divide-y divide-border rounded-xl border border-border">
           {rows.map((r) => (
             <li key={r.id} className="flex items-center gap-3 px-3 py-2 text-sm">
-              <span className={`w-24 shrink-0 font-medium ${r.delta < 0 ? "text-red-500" : r.delta > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+              <span className={`w-24 shrink-0 font-medium ${r.delta < 0 ? "text-red-600 dark:text-red-400" : r.delta > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                 {r.type}
               </span>
               <span className="w-16 shrink-0 tabular-nums">

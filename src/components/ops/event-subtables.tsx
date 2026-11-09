@@ -236,7 +236,7 @@ export function SuppliersEditor({ eventId, canEdit, budget }: { eventId: string;
       <p className="text-sm text-muted-foreground">
         Total com fornecedores: <strong className="text-foreground">{brl(total)}</strong>
         {budget > 0 && (
-          <span className={total > budget ? " font-medium text-red-500" : ""}>
+          <span className={total > budget ? " font-medium text-red-600 dark:text-red-400" : ""}>
             {" "}
             de {brl(budget)} orçados ({Math.round((total / budget) * 100)}%)
           </span>

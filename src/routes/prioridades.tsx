@@ -37,9 +37,9 @@ type Level = "critico" | "alto" | "medio";
 type Item = { key: string; level: Level; group: string; title: string; detail: string; link: string; mine: boolean; sort: number };
 
 const LEVEL: Record<Level, { label: string; icon: LucideIcon; tone: string }> = {
-  critico: { label: "Crítico", icon: AlertOctagon, tone: "text-red-500" },
-  alto: { label: "Alto", icon: AlertTriangle, tone: "text-orange-500" },
-  medio: { label: "Atenção", icon: Clock, tone: "text-amber-500" },
+  critico: { label: "Crítico", icon: AlertOctagon, tone: "text-red-600 dark:text-red-400" },
+  alto: { label: "Alto", icon: AlertTriangle, tone: "text-orange-600 dark:text-orange-400" },
+  medio: { label: "Atenção", icon: Clock, tone: "text-amber-600 dark:text-amber-400" },
 };
 
 function PrioritiesPage() {
