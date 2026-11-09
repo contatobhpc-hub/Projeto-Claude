@@ -24,7 +24,7 @@ import { Pill } from "@/components/ops/fields";
 import { EventDialog } from "@/components/ops/event-dialog";
 import { TaskDialog } from "@/components/ops/task-dialog";
 import type { CalendarEventRow, TaskRow } from "@/integrations/supabase/types";
-import { DOT, EVENT_CATEGORIES, fmtDate, todayISO, useEvents, useTasks } from "@/lib/operacao";
+import { campaignPhase, DOT, EVENT_CATEGORIES, fmtDate, todayISO, useCampaigns, useEvents, useTasks } from "@/lib/operacao";
 import { usePermissions } from "@/lib/permissions";
 import { profileName, useProfiles } from "@/lib/team";
 import { useContracts, useMktEvents, useOfflineMedia } from "@/lib/relacionamento";
@@ -54,6 +54,7 @@ function CalendarPage() {
   const [onlyMine, setOnlyMine] = useState(false);
   const [showTasks, setShowTasks] = useState(true);
   const [showMilestones, setShowMilestones] = useState(true);
+  const [showCampaigns, setShowCampaigns] = useState(true);
   const nav = useNavigate();
   const [openEvent, setOpenEvent] = useState<CalendarEventRow | { date: string } | null>(null);
   const [openTask, setOpenTask] = useState<TaskRow | null>(null);
@@ -120,17 +121,69 @@ function CalendarPage() {
 
   const days: Date[] = [];
   for (let d = gridStart; d <= gridEnd; d = addDays(d, 1)) days.push(d);
+  const weeks: Date[][] = [];
+  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
   const today = todayISO();
+
+  // Campanhas como faixas ao longo do período (até 3 por semana, as demais ficam na tela de campanhas)
+  const canSeeCampaigns = can("campanhas", "view");
+  const { data: campaigns = [] } = useCampaigns();
+  const campaignBars = useMemo(
+    () =>
+      showCampaigns && canSeeCampaigns && (category === ALL || category === "Campanha")
+        ? campaigns
+            .filter((c) => c.start_date && (c.end_date ?? c.start_date) >= from && c.start_date <= to)
+            .filter((c) => !onlyMine || c.owner_id === profile?.id)
+            .map((c) => ({ c, ph: campaignPhase(c, today) }))
+            .filter((x) => x.ph.key !== "parada")
+            .sort((a, b) => (a.c.start_date ?? "").localeCompare(b.c.start_date ?? ""))
+        : [],
+    [showCampaigns, canSeeCampaigns, category, campaigns, from, to, onlyMine, profile?.id, today],
+  );
+  const weekBars = (week: Date[]) => {
+    const ws = iso(week[0]);
+    const we = iso(week[6]);
+    const lanes: string[][] = [];
+    const out: { id: string; name: string; col: number; span: number; lane: number; tone: string; startsHere: boolean; endsHere: boolean; title: string }[] = [];
+    for (const { c, ph } of campaignBars) {
+      const s0 = c.start_date!;
+      const e0 = c.end_date ?? c.start_date!;
+      if (e0 < ws || s0 > we) continue;
+      const s1 = s0 < ws ? ws : s0;
+      const e1 = e0 > we ? we : e0;
+      const col = week.findIndex((d) => iso(d) === s1);
+      const end = week.findIndex((d) => iso(d) === e1);
+      let lane = lanes.findIndex((l) => l.every((x) => x < s1));
+      if (lane === -1) {
+        lane = lanes.length;
+        lanes.push([]);
+      }
+      lanes[lane].push(e1);
+      if (lane > 2) continue;
+      out.push({
+        id: c.id,
+        name: c.name,
+        col,
+        span: end - col + 1,
+        lane,
+        tone: ph.key === "no_ar" ? "bg-primary text-primary-foreground" : ph.key === "concluida" ? "bg-brand-purple/80 text-white" : "bg-[#d5e1de] text-[#2f4448] dark:bg-white/20 dark:text-white",
+        startsHere: s0 >= ws,
+        endsHere: e0 <= we,
+        title: `${c.name} · ${fmtDate(c.start_date)} → ${fmtDate(c.end_date)} · ${ph.label}`,
+      });
+    }
+    return { bars: out, lanes: Math.min(3, lanes.length) };
+  };
 
   return (
     <>
       <PageHeader
         title="Calendário"
-        description="Agenda compartilhada da equipe, com os prazos das tarefas em aberto."
+        description="Agenda da equipe com campanhas em faixas pelo período, compromissos, prazos de tarefas e marcos de contratos, eventos e mídia."
         actions={
           <Can module="calendario" action="create">
             <Button onClick={() => setOpenEvent({ date: today })}>
-              <Plus className="h-4 w-4" /> Novo evento
+              <Plus className="h-4 w-4" /> Novo compromisso
             </Button>
           </Can>
         }
@@ -172,6 +225,12 @@ function CalendarPage() {
             <Switch id="mine" checked={onlyMine} onCheckedChange={setOnlyMine} />
             <Label htmlFor="mine" className="text-sm">Só os meus</Label>
           </div>
+          {canSeeCampaigns && (
+            <div className="flex items-center gap-2">
+              <Switch id="campaigns" checked={showCampaigns} onCheckedChange={setShowCampaigns} />
+              <Label htmlFor="campaigns" className="text-sm">Campanhas</Label>
+            </div>
+          )}
           {canSeeTasks && (
             <div className="flex items-center gap-2">
               <Switch id="tasks" checked={showTasks} onCheckedChange={setShowTasks} />
@@ -189,87 +248,112 @@ function CalendarPage() {
 
       {view === "mes" ? (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <div className="grid min-w-[760px] grid-cols-7">
-            {WEEKDAYS.map((w) => (
-              <div key={w} className="border-b border-border px-2 py-2 text-center text-xs font-medium text-muted-foreground">
-                {w}
-              </div>
-            ))}
-            {days.map((day) => {
-              const key = iso(day);
-              const dayEvents = filteredEvents.filter((e) => e.event_date === key);
-              const dayTasks = deadlines.filter((t) => t.due_date === key);
-              const dayMarks = milestones.filter((m) => m.date === key);
-              const items = dayEvents.length + dayTasks.length + dayMarks.length;
-              const inMonth = isSameMonth(day, cursor);
+          <div className="min-w-[760px]">
+            <div className="grid grid-cols-7">
+              {WEEKDAYS.map((w) => (
+                <div key={w} className="border-b border-border px-2 py-2 text-center text-xs font-semibold text-muted-foreground">
+                  {w}
+                </div>
+              ))}
+            </div>
+            {weeks.map((week) => {
+              const { bars, lanes } = weekBars(week);
+              const barSpace = lanes * 22;
               return (
-                <div
-                  key={key}
-                  className={`group min-h-[112px] border-b border-r border-border p-1.5 [&:nth-child(7n)]:border-r-0 ${inMonth ? "" : "bg-muted/30"}`}
-                >
-                  <div className="mb-1 flex items-center justify-between">
-                    <span
-                      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs tabular-nums ${
-                        key === today ? "bg-primary font-semibold text-primary-foreground" : inMonth ? "" : "text-muted-foreground"
-                      }`}
-                    >
-                      {format(day, "d")}
-                    </span>
-                    {can("calendario", "create") && (
-                      <button
-                        type="button"
-                        aria-label={`Novo evento em ${fmtDate(key)}`}
-                        onClick={() => setOpenEvent({ date: key })}
-                        className="rounded p-0.5 text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground group-hover:opacity-100"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                  <div className="space-y-0.5">
-                    {dayEvents.slice(0, 3).map((e) => (
-                      <button
-                        key={e.id}
-                        type="button"
-                        onClick={() => setOpenEvent(e)}
-                        className={`flex w-full items-center gap-1 truncate rounded px-1 py-0.5 text-left text-[11px] hover:bg-muted ${
-                          e.status === "Cancelado" ? "text-muted-foreground line-through" : ""
-                        }`}
-                      >
-                        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT[e.category] ?? "bg-muted-foreground"}`} />
-                        {e.start_time && <span className="tabular-nums text-muted-foreground">{e.start_time.slice(0, 5)}</span>}
-                        <span className="truncate">{e.title}</span>
-                      </button>
-                    ))}
-                    {dayTasks.slice(0, Math.max(0, 3 - dayEvents.length)).map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => setOpenTask(t)}
-                        className="flex w-full items-center gap-1 truncate rounded border border-dashed border-border px-1 py-0.5 text-left text-[11px] text-muted-foreground hover:bg-muted"
-                      >
-                        <ListTodo className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{t.title}</span>
-                      </button>
-                    ))}
-                    {dayMarks.slice(0, Math.max(0, 3 - dayEvents.length - dayTasks.length)).map((m) => (
-                      <button
-                        key={m.key}
-                        type="button"
-                        onClick={m.go}
-                        title={`${m.kind}: ${m.title}`}
-                        className="flex w-full items-center gap-1 truncate rounded bg-amber-500/10 px-1 py-0.5 text-left text-[11px] text-amber-700 hover:bg-amber-500/20 dark:text-amber-300"
-                      >
-                        <Flag className="h-3 w-3 shrink-0" />
-                        <span className="truncate">{m.title}</span>
-                      </button>
-                    ))}
-                    {items > 3 && (
-                      <button type="button" onClick={() => setView("lista")} className="px-1 text-[11px] text-primary-ink hover:underline">
-                        +{items - 3} mais
-                      </button>
-                    )}
-                  </div>
+                <div key={iso(week[0])} className="relative grid grid-cols-7 border-b border-border last:border-b-0">
+                  {week.map((day) => {
+                    const key = iso(day);
+                    const dayEvents = filteredEvents.filter((e) => e.event_date === key);
+                    const dayTasks = deadlines.filter((t) => t.due_date === key);
+                    const dayMarks = milestones.filter((m) => m.date === key);
+                    const items = dayEvents.length + dayTasks.length + dayMarks.length;
+                    const inMonth = isSameMonth(day, cursor);
+                    return (
+                      <div key={key} className={`group min-h-[124px] border-r border-border p-1.5 last:border-r-0 ${inMonth ? "" : "bg-muted/40"}`}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <span
+                            className={`flex h-7 w-7 items-center justify-center rounded-full text-[13px] tabular-nums ${
+                              key === today ? "bg-primary font-bold text-primary-foreground" : inMonth ? "font-medium" : "text-muted-foreground"
+                            }`}
+                          >
+                            {format(day, "d")}
+                          </span>
+                          {can("calendario", "create") && (
+                            <button
+                              type="button"
+                              aria-label={`Novo compromisso em ${fmtDate(key)}`}
+                              onClick={() => setOpenEvent({ date: key })}
+                              className="rounded p-1 text-muted-foreground opacity-0 hover:bg-muted hover:text-foreground focus:opacity-100 group-hover:opacity-100"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="space-y-0.5" style={{ paddingTop: barSpace }}>
+                          {dayEvents.slice(0, 3).map((e) => (
+                            <button
+                              key={e.id}
+                              type="button"
+                              onClick={() => setOpenEvent(e)}
+                              title={e.title}
+                              className={`flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-xs hover:bg-muted ${
+                                e.status === "Cancelado" ? "text-muted-foreground line-through" : ""
+                              }`}
+                            >
+                              <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT[e.category] ?? "bg-muted-foreground"}`} />
+                              {e.start_time && <span className="tabular-nums text-muted-foreground">{e.start_time.slice(0, 5)}</span>}
+                              <span className="truncate">{e.title}</span>
+                            </button>
+                          ))}
+                          {dayTasks.slice(0, Math.max(0, 3 - dayEvents.length)).map((t) => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => setOpenTask(t)}
+                              title={`Prazo: ${t.title}`}
+                              className="flex w-full items-center gap-1 rounded border border-dashed border-border px-1 py-0.5 text-left text-xs text-muted-foreground hover:bg-muted"
+                            >
+                              <ListTodo className="h-3 w-3 shrink-0" />
+                              <span className="truncate">{t.title}</span>
+                            </button>
+                          ))}
+                          {dayMarks.slice(0, Math.max(0, 3 - dayEvents.length - dayTasks.length)).map((m) => (
+                            <button
+                              key={m.key}
+                              type="button"
+                              onClick={m.go}
+                              title={`${m.kind}: ${m.title}`}
+                              className="flex w-full items-center gap-1 rounded bg-amber-500/10 px-1 py-0.5 text-left text-xs text-amber-800 hover:bg-amber-500/20 dark:text-amber-300"
+                            >
+                              <Flag className="h-3 w-3 shrink-0" />
+                              <span className="truncate">{m.title}</span>
+                            </button>
+                          ))}
+                          {items > 3 && (
+                            <button type="button" onClick={() => setView("lista")} className="px-1 text-xs font-medium text-primary-ink hover:underline">
+                              +{items - 3} mais
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {bars.length > 0 && (
+                    <div className="pointer-events-none absolute inset-x-0 top-10 grid grid-cols-7 gap-y-1 px-1" style={{ gridAutoRows: "18px" }}>
+                      {bars.map((b) => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          title={b.title}
+                          onClick={() => void nav({ to: "/campanhas/$id", params: { id: b.id } })}
+                          className={`pointer-events-auto mx-0.5 truncate px-2 text-left text-[11px] font-semibold leading-[18px] ${b.tone} ${b.startsHere ? "rounded-l-full" : ""} ${b.endsHere ? "rounded-r-full" : ""}`}
+                          style={{ gridColumn: `${b.col + 1} / span ${b.span}`, gridRow: b.lane + 1 }}
+                        >
+                          {b.startsHere || b.col === 0 ? b.name : ""}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
